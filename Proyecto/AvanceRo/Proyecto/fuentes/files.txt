@@ -1,6 +1,0 @@
-./src/unam/fi/poo/vista/PacManScene.java
-./src/unam/fi/poo/estructuras/Vertex.java
-./src/unam/fi/poo/estructuras/Colors.java
-./src/unam/fi/poo/estructuras/Graph.java
-./src/unam/fi/poo/vista/PacMan.java
-./src/unam/fi/poo/vista/Ghost.java
