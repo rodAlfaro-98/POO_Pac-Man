@@ -1,0 +1,8 @@
+./src/unam/fi/poo/vista/PacManScene.java
+./src/unam/fi/poo/objetos/Hilo.java
+./src/unam/fi/poo/objetos/Administrador.java
+./src/unam/fi/poo/objetos/Sprite.java
+./src/unam/fi/poo/estructuras/Vertex.java
+./src/unam/fi/poo/estructuras/Colors.java
+./src/unam/fi/poo/estructuras/Grafo.java
+./src/unam/fi/poo/estructuras/Graph.java
