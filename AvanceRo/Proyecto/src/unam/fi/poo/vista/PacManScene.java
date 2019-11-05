@@ -69,9 +69,9 @@ public class PacManScene extends Application{
 		
 		this.pac = new PacMan(g.getVertex("585"), this.g);
 		this.blinky =  new Ghost("./imagenes/GHR_", "blinky", origen, this.g, this.pac);
-		this.inky =  new Ghost("./imagenes/GHB_", "blinky", origen, this.g, this.pac);
-		this.pinky =  new Ghost("./imagenes/GHP_", "blinky", origen, this.g, this.pac);
-		this.clyde =  new Ghost("./imagenes/GHO_", "blinky", origen, this.g, this.pac);
+		this.inky =  new Ghost("./imagenes/GHB_", "inky", origen, this.g, this.pac);
+		this.pinky =  new Ghost("./imagenes/GHP_", "pinky", origen, this.g, this.pac);
+		this.clyde =  new Ghost("./imagenes/GHO_", "clyde", origen, this.g, this.pac);
 	}
 
 	public void start(Stage primaryStage){
@@ -92,7 +92,7 @@ public class PacManScene extends Application{
 			public void handle( KeyEvent e ){
 				Vertex destino = new Vertex();
 				boolean done = false;
-
+				
 				switch( e.getCode() ){
 					case UP:
 					{
@@ -172,30 +172,22 @@ public class PacManScene extends Application{
 					pac.setOrigen( destino );
 					
 					if(start == 0){
-						System.out.println("Estoy en 0");
-						//clyde.mover();
 						Thread g1 = new Thread(blinky);
 						g1.start();
 						start--;
 					}else if(start == 2){
-						System.out.println("Estoy en 1");
 						Thread g2 = new Thread(inky);
 						g2.start();
 						start--;
 					}else if(start == 4){
-						System.out.println("Estoy en 2");
-						//inky.mover();
-						Thread g3 = new Thread(inky);
+						Thread g3 = new Thread(pinky);
 						g3.start();
 						start--;
 					}else if(start == 6){
-						System.out.println("Estoy en 3");
-						/*blinky.mover();*/
 						Thread g4 = new Thread(clyde);
 						g4.start();
 						start--;
 					}else if(start >= 8){
-						System.out.println("Estoy en else");
 						blinky.obtenerMovimineto(pac.getOrigen());
 						inky.obtenerMovimineto(pac.getOrigen());
 						pinky.obtenerMovimineto(pac.getOrigen());
@@ -204,10 +196,6 @@ public class PacManScene extends Application{
 					}else{
 						start--;
 						if(pac.getStatus() == false){
-							blinky.done();
-							inky.done();
-							pinky.done();
-							clyde.done();
 							System.out.println("GAME OVER");
 							pac.setEstado("DIE");
 						}
