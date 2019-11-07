@@ -127,7 +127,7 @@ public class Ghost implements Runnable{
 		
 		Vertex destino = new Vertex();
 		
-		if(this.movement == 2){
+		if(this.movement == 4){
 			obtenerMovimineto(pac);
 			this.movement = 0;
 		}
@@ -162,7 +162,7 @@ public class Ghost implements Runnable{
 		Vertex pac = pacMan.getOrigen();
 		
 		Vertex destino = new Vertex();
-		if(this.movement == 2){
+		if(this.movement == 4){
 			
 			Vertex destinoMasUno = pac;
 			Vertex destinoMasDos = pac;
@@ -275,7 +275,7 @@ public class Ghost implements Runnable{
 		
 		Vertex destino = new Vertex();
 		
-		if(this.movement == 6){
+		if(this.movement == 4){
 			obtenerMovimineto(pac);
 			this.movement = 0;
 			//System.out.println("\n\n\n");
