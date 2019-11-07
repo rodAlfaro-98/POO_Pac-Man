@@ -17,8 +17,10 @@ public class Ghost implements Runnable{
 	private Vertex origen;
 	private ArrayDeque<String> movimientos;
 	private PacMan pacMan;
-	private int num;
-	private int randomPast;
+	private int movement;
+	private long scatter;
+	private long nonScatter;
+	private Ghost Blinky;
 	
 	public Ghost(String ghost, String name, Vertex origen, Graph tablero, PacMan pacMan){
 		this.me =  new Sprite(ghost,2, false, "RIGHT",origen.getX(), origen.getY());
@@ -26,10 +28,25 @@ public class Ghost implements Runnable{
 		this.tablero = tablero;
 		this.origen = origen;
 		this.movimientos = tablero.goToVertex(origen.getName(), pacMan.getOrigen().getName());
-		this.randomPast = 0;
 		this.movimientos.push("351");
 		this.pacMan = pacMan;
-		this.num = 0;
+		this.movement = 0;
+		this.scatter = 0;
+		this.nonScatter = 0;
+	}
+	
+	public Ghost(String ghost, String name, Vertex origen, Graph tablero, PacMan pacMan, Ghost Blinky){
+		this.me =  new Sprite(ghost,2, false, "RIGHT",origen.getX(), origen.getY());
+		this.name = name;
+		this.tablero = tablero;
+		this.origen = origen;
+		this.movimientos = tablero.goToVertex(origen.getName(), pacMan.getOrigen().getName());
+		this.movimientos.push("351");
+		this.pacMan = pacMan;
+		this.movement = 0;
+		this.scatter = 0;
+		this.nonScatter = 0;
+		this.Blinky = Blinky;
 	}
 	
 	public Sprite getMe(){
@@ -48,9 +65,21 @@ public class Ghost implements Runnable{
 		this.me.start();
 	}
 	
+	public ArrayDeque<String> getMovimientos(){	
+		return this.movimientos;
+	}
+	
 	public void obtenerMovimineto(Vertex pac){
 		
-		this.movimientos = tablero.goToVertex(origen.getName(), pac.getName());
+		if(this.name.equals("inky")){
+			ArrayDeque<String> mover = tablero.goToDouble(origen.getName(), pac.getName(), this.Blinky.getMovimientos().size());
+			if(mover != null){
+				this.movimientos = mover;
+			}
+		}
+		else{
+			this.movimientos = tablero.goToVertex(origen.getName(), pac.getName());
+		}
 	}
 	
 	public long mover(long start){
@@ -66,11 +95,14 @@ public class Ghost implements Runnable{
 			if(this.name.equals("blinky")){
 				moverBlinky();
 				return System.currentTimeMillis();
-			}else if(this.name.equals("pinky") && (finish - start) >= 250 ){
-				moverPinky();
+			}else if(this.name.equals("pinky")){
+				//moverPinky();
 				return System.currentTimeMillis();
 			}else if(this.name.equals("clyde") && (finish - start) >= 250 ){
-				moverClyde();
+				//moverClyde();
+				return System.currentTimeMillis();
+			}else if(this.name.equals("inky") && (finish - start) >= 255 ){
+				moverInky();
 				return System.currentTimeMillis();
 			}
 			
@@ -81,13 +113,13 @@ public class Ghost implements Runnable{
 	
 	public void run(){
 		long start = System.currentTimeMillis();
-		try{
+		//try{
 			while(this.pacMan.getStatus() == true){
 				start = mover(start);
 			}
-		}catch(Exception e){
+		/*}catch(Exception e){
 			this.pacMan.setStatus(false);
-		}
+		}*/
 	}
 	
 	public void moverBlinky(){
@@ -95,16 +127,12 @@ public class Ghost implements Runnable{
 		
 		Vertex destino = new Vertex();
 		
-		if(this.num == 1){
+		if(this.movement == 2){
 			obtenerMovimineto(pac);
-			this.num = -1;
+			this.movement = 0;
 		}
 		String lugar = movimientos.pollFirst();
 		destino = tablero.getVertex(lugar);
-		
-		if(destino == this.pacMan.getOrigen()){
-			pacMan.setStatus(false);
-		}
 		
 		double origX = this.origen.getX();
 		double origY = this.origen.getY();
@@ -127,16 +155,42 @@ public class Ghost implements Runnable{
 		this.me.getImageV().setX(destino.getX()-6);
 		this.me.getImageV().setY(destino.getY()-6);
 		this.origen = destino;
-		
-		this.num++;
+		this.movement++;
 	}
 	
 	public void moverPinky(){
 		Vertex pac = pacMan.getOrigen();
 		
 		Vertex destino = new Vertex();
-		if(this.movimientos.size() == 0){
-			obtenerMovimineto(pac);
+		if(this.movement == 2){
+			
+			Vertex destinoMasUno = pac;
+			Vertex destinoMasDos = pac;
+			
+			if(this.pacMan.getDirection() == 0){
+				destinoMasUno = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() - 78 );
+				destinoMasDos = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() - 104 );
+			}else if(this.pacMan.getDirection() == 1){
+				destinoMasUno = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() + 78 );
+				destinoMasDos = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() + 104 );
+			}else if(this.pacMan.getDirection() == 2){
+				destinoMasUno = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() - 3 );
+				destinoMasDos = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() - 4 );
+			}else{
+				destinoMasUno = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() + 3 );
+				destinoMasDos = destino = this.tablero.getVertex( this.pacMan.getOrigen().getIntName() + 4 );
+			}
+			
+			if(destinoMasDos != null && this.tablero.contains(destinoMasDos.getName())){
+				obtenerMovimineto(destinoMasDos);
+			}else if(destinoMasUno != null && this.tablero.contains(destinoMasUno.getName()) && destinoMasDos == null){
+				obtenerMovimineto(destinoMasUno);
+			}else{
+				obtenerMovimineto(pac);
+			}
+			
+			this.movement = 0;
+			
 		}
 		String lugar = movimientos.pollFirst();
 		destino = tablero.getVertex(lugar);
@@ -162,6 +216,8 @@ public class Ghost implements Runnable{
 		this.me.getImageV().setX(destino.getX()-6);
 		this.me.getImageV().setY(destino.getY()-6);
 		this.origen = destino;
+		
+		this.movement++;
 			
 	}
 	
@@ -171,37 +227,35 @@ public class Ghost implements Runnable{
 		Vertex destino = new Vertex();
 		boolean done = false;
 		
-		if(this.movimientos.size() > 15){
-			moverPinky();
+		if(this.movimientos.size() > 8){
+			moverBlinky();
 		}
 		else{
-			int random = rand.nextInt(4);
+			
+			done = true;
+			
+			obtenerMovimineto(tablero.getVertex("729"));
+			
+			String lugar = movimientos.pollFirst();
+			destino = tablero.getVertex(lugar);
+			
+			double origX = this.origen.getX();
+			double origY = this.origen.getY();
 		
-			if(random == 0 && randomPast != 1){
-				destino = this.tablero.getVertex( this.origen.getIntName() - 1 );
-				if( destino != null && this.origen.getNeighbors().contains(destino)){
-					this.setEstado("LEFT");
-					done = true;
+			double destX = destino.getX();
+			double destY = destino.getY();
+		
+			if(origY == destY){
+				if( (origX-destX) > 0 ){
+					setEstado("LEFT");
+				}else{
+					setEstado("RIGHT");
 				}
-			}else if(random == 1 && randomPast != 0){
-				destino = this.tablero.getVertex( this.origen.getIntName() + 1 );
-				if( destino != null && this.origen.getNeighbors().contains(destino)){
-					this.setEstado("RIGHT");
-					done = true;
-				}
-			}else if(random == 2 && randomPast != 3){
-				destino = this.tablero.getVertex( this.origen.getIntName() - 26 );
-				if( destino != null && this.origen.getNeighbors().contains(destino)){
-					this.setEstado("UP");
-					done = true;
-				}
-			}else if(random == 3 && randomPast != 2){
-				destino = this.tablero.getVertex( this.origen.getIntName() + 26 );
-				if( destino != null && this.origen.getNeighbors().contains(destino)){
-					this.setEstado("DOWN");
-					done = true;
-				}	
-			}
+			}else if( (origY-destY) < 0){
+				setEstado("DOWN");
+			}else{
+				setEstado("UP");
+			}	
 			
 			if(done){
 						
@@ -209,11 +263,49 @@ public class Ghost implements Runnable{
 				this.getImageV().setY(destino.getY()-6);
 				this.origen = destino;
 			}	
-			
-			obtenerMovimineto(pac);
 
-			this.randomPast = random;
+			this.movement = 0;
 		}
+		
+	}
+	
+	public void moverInky(){
+		
+		Vertex pac = pacMan.getOrigen();
+		
+		Vertex destino = new Vertex();
+		
+		if(this.movement == 6){
+			obtenerMovimineto(pac);
+			this.movement = 0;
+			//System.out.println("\n\n\n");
+		}
+		//System.out.println(this.movimientos.size()+"; move: "+this.movement);
+		String lugar = movimientos.pollFirst();
+		destino = tablero.getVertex(lugar);
+		
+		double origX = this.origen.getX();
+		double origY = this.origen.getY();
+		
+		double destX = destino.getX();
+		double destY = destino.getY();
+		
+		if(origY == destY){
+			if( (origX-destX) > 0 ){
+				setEstado("LEFT");
+			}else{
+				setEstado("RIGHT");
+			}
+		}else if( (origY-destY) < 0){
+			setEstado("DOWN");
+		}else{
+			setEstado("UP");
+		}
+		
+		this.me.getImageV().setX(destino.getX()-6);
+		this.me.getImageV().setY(destino.getY()-6);
+		this.origen = destino;
+		this.movement++;
 		
 	}
 	

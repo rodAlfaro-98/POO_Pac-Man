@@ -29,6 +29,7 @@ public class Vertex{
 	private Circle c;
 	private Text nombre;
 	private ArrayList<Line> edges;
+	private boolean isVisited;
 
 	//private File file;
 	//private Image image;
@@ -46,6 +47,7 @@ public class Vertex{
 		this.neighbors = new ArrayList<Vertex>();
 		this.edges = new ArrayList<Line>();
 		this.nombre = new Text(x,y,_name);
+		this.isVisited = false;
 		//this.file = new File("./imagenes/Comida.png");
 		//this.image = new Image( file.toURI().toString() );
 		//this.imageV = new ImageView(image);
@@ -175,6 +177,14 @@ public class Vertex{
 		System.out.print(this.name+" -> "+this.predecesor+s+
 			this.distance+s+this.discovery_time+"/"+this.finish_time+s+"\t"+
 			color+s+this.predecesor);
+	}
+	
+	public void setVisited(boolean visited){
+		this.isVisited = visited;
+	}
+	
+	public boolean getVisited(){
+		return this.isVisited;
 	}
 
 }

@@ -10,6 +10,9 @@ public class Graph{
 	private HashMap<String, Vertex> vertices;
 	private static int time;
 
+	private ArrayList<Integer> tiempos = new ArrayList<Integer>();
+	private ArrayList<ArrayDeque<String>> movimientos = new ArrayList<>();
+
 	public Graph(){
 		this.vertices = new HashMap<String, Vertex>();
 	}
@@ -72,7 +75,6 @@ public class Graph{
 		for( Vertex v : this.vertices.values()){
 			v.print();
 			System.out.println();
-			//v.printNeighbors();
 		}
 	}
 
@@ -183,11 +185,68 @@ public class Graph{
 			pila.push( v1.getName() );
 		}
 
-		//System.out.println(" Go "+v1.getName() + " to "+v2.getName());
-		//System.out.println(pila);
-
 		return pila;
 
+	}
+	
+	public ArrayDeque<String> goToDouble(String v1, String v2, int tam){
+		
+		initializeVisit();
+		
+		goToDoubleVertex(v1,v2);
+		
+		for(int i = 0; i < this.movimientos.size(); i++){
+			
+			ArrayDeque<String> actual = this.movimientos.get(i);
+			
+			if( actual.size()>=(2*tam) && (actual.getFirst() == v1)){
+				
+				//System.out.println("tam: "+tam+"; tam lista: "+actual.size());
+				
+				return actual;
+			}
+			
+		}
+		
+		return null;
+		
+		
+		
+	}
+	
+	public void goToDoubleVertex( String _v1, String _v2){
+
+		Vertex v1 = this.vertices.get(_v1);
+		Vertex v2 = this.vertices.get(_v2);
+
+		BSF( v1 );
+		
+		ArrayDeque<String> pila = new ArrayDeque<String>();
+
+		if(v1 != null && v2 != null){
+		
+			pila.push( v2.getName() );
+
+			for( Vertex neighbor : v2.getNeighbors() ){
+
+				if( !neighbor.getName().equals( v1.getName() )){
+					pila.push(v2.getName() );
+					gotoVertex( v1, neighbor.getName(), pila);
+				}
+				this.movimientos.add( pila );
+				this.tiempos.add(pila.size());
+			}
+			
+			pila.push( v1.getName() );
+
+		}
+
+	}
+	
+	public void initializeVisit(){
+		for(Vertex value : this.vertices.values()){
+			value.setVisited(false);
+		}	
 	}
 	
 }

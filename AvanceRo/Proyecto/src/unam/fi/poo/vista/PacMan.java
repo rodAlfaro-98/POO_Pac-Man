@@ -14,12 +14,14 @@ public class PacMan{
 	private Graph tablero;
 	private Vertex origen;
 	private boolean alive;
+	private int direction;
 	
 	public PacMan(Vertex origen, Graph tablero){
 		this.me = new Sprite("./imagenes/PM_",4, false, "RIGHT", origen.getX(), origen.getY());	
 		this.tablero = tablero;
 		this.origen = origen;
 		this.alive = true;
+		this.direction = 0;
 	}
 	
 	public Sprite getMe(){
@@ -53,5 +55,13 @@ public class PacMan{
 	
 	public boolean getStatus(){
 		return this.alive;
+	}
+	
+	public void setDirection(int dir){
+		this.direction = dir;
+	}
+	
+	public int getDirection(){
+		return this.direction;
 	}
 }

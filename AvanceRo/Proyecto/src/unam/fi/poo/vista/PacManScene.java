@@ -69,7 +69,7 @@ public class PacManScene extends Application{
 		
 		this.pac = new PacMan(g.getVertex("585"), this.g);
 		this.blinky =  new Ghost("./imagenes/GHR_", "blinky", origen, this.g, this.pac);
-		this.inky =  new Ghost("./imagenes/GHB_", "inky", origen, this.g, this.pac);
+		this.inky =  new Ghost("./imagenes/GHB_", "inky", origen, this.g, this.pac, this.blinky);
 		this.pinky =  new Ghost("./imagenes/GHP_", "pinky", origen, this.g, this.pac);
 		this.clyde =  new Ghost("./imagenes/GHO_", "clyde", origen, this.g, this.pac);
 	}
@@ -101,6 +101,7 @@ public class PacManScene extends Application{
                     		pac.setEstado("UP");
                     		//rGhost.setEstado("UP");
                     		done = true;
+							pac.setDirection(0);
                     	}
 					}
 					break;
@@ -111,6 +112,7 @@ public class PacManScene extends Application{
                     		pac.setEstado("DOWN");
                     		//rGhost.setEstado("DOWN");
                     		done = true;
+							pac.setDirection(1);
                     	}
 					}
 					break;
@@ -121,6 +123,7 @@ public class PacManScene extends Application{
                     		pac.setEstado("LEFT");
                     		//rGhost.setEstado("LEFT");
                     		done = true;
+							pac.setDirection(2);
                     	}
                     	else{
                     		destino = g.getVertex( pac.getOrigen().getIntName() + 25 );
@@ -129,6 +132,7 @@ public class PacManScene extends Application{
                     		pac.setEstado("LEFT");
                     		//rGhost.setEstado("LEFT");
                     		done = true;
+							pac.setDirection(2);
                     		}
                     	}
 
@@ -141,6 +145,7 @@ public class PacManScene extends Application{
                     		pac.setEstado("RIGHT");
                     		//rGhost.setEstado("RIGHT");
                     		done = true;
+							pac.setDirection(3);
                     	}
                     	else{
                     		destino = g.getVertex( pac.getOrigen().getIntName() - 25 );
@@ -149,13 +154,13 @@ public class PacManScene extends Application{
                     		pac.setEstado("LEFT");
                     		//rGhost.setEstado("LEFT");
                     		done = true;
+							pac.setDirection(3);
                     		}
                     	}
 					}
 					break;
 					case ESCAPE:
 					{
-	          			System.out.println(pac.getOrigen().getName());
 	          			if(root.getChildren().contains(pac.getOrigen().getCircle()))
 	          				root.getChildren().remove(pac.getOrigen().getCircle());
 	          			//admon.setNodos(this.root.getChildren());
@@ -172,11 +177,11 @@ public class PacManScene extends Application{
 					pac.setOrigen( destino );
 					
 					if(start == 0){
-						Thread g1 = new Thread(blinky);
+						Thread g1 = new Thread(inky);
 						g1.start();
 						start--;
 					}else if(start == 2){
-						Thread g2 = new Thread(inky);
+						Thread g2 = new Thread(blinky);
 						g2.start();
 						start--;
 					}else if(start == 4){
@@ -195,10 +200,10 @@ public class PacManScene extends Application{
 						start--;
 					}else{
 						start--;
-						if(pac.getStatus() == false){
+						/*if(pac.getStatus() == false){
 							System.out.println("GAME OVER");
 							pac.setEstado("DIE");
-						}
+						}*/
 					}
 				
 					if(root.getChildren().contains(destino.getCircle())){
@@ -223,8 +228,8 @@ public class PacManScene extends Application{
 		pac.start();
 		blinky.start();
 		inky.start();
-		pinky.start();
-		clyde.start();
+		//pinky.start();
+		//clyde.start();
 
 	}
 
