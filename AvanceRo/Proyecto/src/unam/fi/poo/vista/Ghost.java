@@ -3,6 +3,7 @@ package unam.fi.poo.vista;
 import unam.fi.poo.objetos.Sprite;
 import unam.fi.poo.estructuras.Vertex;
 import unam.fi.poo.estructuras.Graph;
+import java.util.Random;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +22,8 @@ public class Ghost implements Runnable{
 	private long scatter;
 	private long nonScatter;
 	private Ghost Blinky;
+	private int direction;
+	private boolean fightened;
 	
 	public Ghost(String ghost, String name, Vertex origen, Graph tablero, PacMan pacMan){
 		this.me =  new Sprite(ghost,2, false, "RIGHT",origen.getX(), origen.getY());
@@ -33,6 +36,7 @@ public class Ghost implements Runnable{
 		this.movement = 0;
 		this.scatter = 0;
 		this.nonScatter = 0;
+		this.fightened = false;
 	}
 	
 	public Ghost(String ghost, String name, Vertex origen, Graph tablero, PacMan pacMan, Ghost Blinky){
@@ -47,6 +51,7 @@ public class Ghost implements Runnable{
 		this.scatter = 0;
 		this.nonScatter = 0;
 		this.Blinky = Blinky;
+		this.fightened = false;
 	}
 	
 	public Sprite getMe(){
@@ -71,16 +76,21 @@ public class Ghost implements Runnable{
 	
 	public ArrayDeque<String> obtenerMovimineto(Vertex pac){
 		
-		if(this.name.equals("inky")){
-			ArrayDeque<String> mover = tablero.goToDouble(origen.getName(), pac.getName(), this.Blinky.getMovimientos().size());
-			if(mover != null){
-				return mover;
-			}else{
-				return this.movimientos;
-			}
-		}
-		else{
+		if(pac.getIntName() == 729){
 			return tablero.goToVertex(origen.getName(), pac.getName());
+		}else{
+			synchronized(this.pacMan){
+				if(this.name.equals("inky") && this.fightened != true){
+					ArrayDeque<String> mover = tablero.goToDouble(origen.getName(), this.pacMan.getOrigen().getName(), this.Blinky.getMovimientos().size());
+					if(mover != null){
+						return mover;
+					}else{
+						return this.movimientos;
+					}	
+				}else{
+					return tablero.goToVertex(origen.getName(), this.pacMan.getOrigen().getName());
+				}
+			}
 		}
 	}
 	
@@ -92,7 +102,7 @@ public class Ghost implements Runnable{
 		
 		long finish = System.currentTimeMillis();
 
-		if((finish - start) >= 150){
+		if((finish - start) >= 250){
 		
 			if(this.name.equals("blinky")){
 				moverBlinky();
@@ -100,10 +110,10 @@ public class Ghost implements Runnable{
 			}else if(this.name.equals("pinky")){
 				moverPinky();
 				return System.currentTimeMillis();
-			}else if(this.name.equals("clyde") && (finish - start) >= 250 ){
+			}else if(this.name.equals("clyde")){
 				moverClyde();
 				return System.currentTimeMillis();
-			}else if(this.name.equals("inky") && (finish - start) >= 250 ){
+			}else if(this.name.equals("inky")){
 				moverInky();
 				return System.currentTimeMillis();
 			}
@@ -115,9 +125,23 @@ public class Ghost implements Runnable{
 	
 	public void run(){
 		long start = System.currentTimeMillis();
-			while(this.pacMan.getStatus() == true){
+		while(this.pacMan.getStatus() == true){
+			if(this.fightened){
+				long currentTime = System.currentTimeMillis();
+				this.pacMan.endChase(currentTime);
+				
+				if(this.pacMan.getChase() != true){
+					setFrightened(false);
+				}
+				
+				if(currentTime - start >= 300 && this.fightened){
+					start = escape(start);
+				}
+				
+			}else{
 				start = mover(start);
 			}
+		}
 	}
 	
 	public void moverBlinky(){
@@ -134,7 +158,6 @@ public class Ghost implements Runnable{
 	public void moverPinky(){
 		
 		Vertex pac = pacMan.getOrigen();
-		//Vertex destino = new Vertex();
 		
 		if(this.movement >= 2){
 			
@@ -190,13 +213,100 @@ public class Ghost implements Runnable{
 		
 		Vertex pac = pacMan.getOrigen();
 		
-		if(this.movement >= 4){
+		if(this.movement >= 2){
 			this.movimientos=obtenerMovimineto(pac);
 			this.movement = 0;
-			//System.out.println("\n\n\n");
 		}
 		actualizar();
 		
+		
+	}
+	
+	public void scatter(){
+		
+	}
+	
+	public long escape(long start){
+		if(this.movement >= 2 && this.movimientos.size() > 2){
+			this.movimientos = obtenerMovimineto(this.pacMan.getOrigen());
+		}
+		Random rand = new Random();
+		int direction = rand.nextInt(4);
+		int towardPacMan;
+		String next = this.movimientos.pollFirst();
+		if(next != null){
+			towardPacMan = Integer.parseInt(next);
+		}else{
+			this.origen = tablero.getVertex("351");
+			this.me.getImageV().setX(this.origen.getX()-6);
+			this.me.getImageV().setY(this.origen.getY()-6);
+			setFrightened(false);
+			return start;
+		}
+		
+		Vertex escape = new Vertex();
+		boolean escaping = false;
+		
+		if(direction == 0 && this.direction != 1){
+			if((this.origen.getIntName() + 1) != towardPacMan && tablero.getVertex(this.origen.getIntName() + 1) != null){
+				escape = tablero.getVertex(this.origen.getIntName() + 1);
+				escaping = true;
+			}
+		}else if(direction == 1 && this.direction != 0){
+			if((this.origen.getIntName() - 1) != towardPacMan && tablero.getVertex(this.origen.getIntName() - 1) != null){
+				escape = tablero.getVertex(this.origen.getIntName() - 1);
+				escaping = true;
+			}
+		}else if(direction == 2 && this.direction != 3){
+			if((this.origen.getIntName() + 26) != towardPacMan && tablero.getVertex(this.origen.getIntName() + 26) != null){
+				escape = tablero.getVertex(this.origen.getIntName() + 26);
+				escaping = true;
+			}
+		}else if(this.direction != 2){
+			if((this.origen.getIntName() - 26) != towardPacMan && tablero.getVertex(this.origen.getIntName() - 26) != null){
+				escape = tablero.getVertex(this.origen.getIntName() - 26);
+				escaping = true;
+			}
+		}
+		
+		if(escaping && this.movement >= 2 && escape != null && this.origen.getNeighbors().contains(escape)){
+			double origX = this.origen.getX();
+			double origY = this.origen.getY();
+			
+			double destX = escape.getX();
+			double destY = escape.getY();
+	
+			if(origY == destY){
+				if( (origX-destX) > 0 ){
+					setEstado("LEFT");
+				}else{
+					setEstado("RIGHT");
+				}
+			}else if( (origY-destY) < 0){
+				setEstado("DOWN");
+			}else{
+				setEstado("UP");
+			}
+		
+			this.me.getImageV().setX(destX-6);
+			this.me.getImageV().setY(destY-6);
+			if(escape.getIntName() == this.pacMan.getOrigen().getIntName()){
+				this.origen = tablero.getVertex("351");
+				this.me.getImageV().setX(this.origen.getX()-6);
+				this.me.getImageV().setY(this.origen.getY()-6);
+				this.setFrightened(false);
+				return start;
+			}
+			this.origen = escape;
+			this.movement = 0;
+			this.direction = direction;
+			
+			return System.currentTimeMillis();
+		}
+		
+		this.movement++;
+		
+		return start;
 		
 	}
 	
@@ -225,8 +335,8 @@ public class Ghost implements Runnable{
 				setEstado("UP");
 			}
 		
-			this.me.getImageV().setX(destino.getX()-6);
-			this.me.getImageV().setY(destino.getY()-6);
+			this.me.getImageV().setX(destX-6);
+			this.me.getImageV().setY(destY-6);
 			this.origen = destino;
 		
 			this.movement++;
@@ -235,5 +345,9 @@ public class Ghost implements Runnable{
 			this.movement = 2;
 		}
 		
+	}
+	
+	public void setFrightened(boolean frightened){
+		this.fightened = frightened;
 	}
 }

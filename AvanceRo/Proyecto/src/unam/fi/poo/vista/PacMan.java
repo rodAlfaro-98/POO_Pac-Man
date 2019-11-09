@@ -15,6 +15,8 @@ public class PacMan{
 	private Vertex origen;
 	private boolean alive;
 	private int direction;
+	private boolean chase;
+	private long startChase;
 	
 	public PacMan(Vertex origen, Graph tablero){
 		this.me = new Sprite("./imagenes/PM_",4, false, "RIGHT", origen.getX(), origen.getY());	
@@ -22,6 +24,8 @@ public class PacMan{
 		this.origen = origen;
 		this.alive = true;
 		this.direction = 0;
+		this.chase = false;
+		this.startChase = 0;
 	}
 	
 	public Sprite getMe(){
@@ -63,5 +67,28 @@ public class PacMan{
 	
 	public int getDirection(){
 		return this.direction;
+	}
+	
+	public void startChase(){
+		this.chase = true;
+		this.startChase = System.currentTimeMillis();
+	}
+	
+	public void endChase(long currentTime){
+		if(currentTime - this.startChase >= 10000){
+			this.chase = false;
+			this.startChase = 0;
+		}
+	}
+	
+	public void isChase(){
+		int origin = this.origen.getIntName();
+		if(origin == 573 || origin == 598 || origin == 78 || origin == 53 ){
+			startChase();
+		}
+	}
+	
+	public boolean getChase(){
+		return this.chase;
 	}
 }

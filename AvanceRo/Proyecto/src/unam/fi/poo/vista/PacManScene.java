@@ -170,6 +170,15 @@ public class PacManScene extends Application{
 					origen.getCircle().setRadius(1);
 					destino.getCircle().setRadius(3);
 					pac.setOrigen( destino );
+					pac.isChase();
+					if(pac.getChase() == true){
+						blinky.setFrightened(true);
+						inky.setFrightened(true);
+						pinky.setFrightened(true);
+						clyde.setFrightened(true);
+					}
+					long current = System.currentTimeMillis();
+					pac.endChase(current);
 					
 					if(start == 0){
 						Thread g1 = new Thread(inky);
