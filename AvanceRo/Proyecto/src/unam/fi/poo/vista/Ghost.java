@@ -276,17 +276,7 @@ public class Ghost implements Runnable{
 			double destX = escape.getX();
 			double destY = escape.getY();
 	
-			if(origY == destY){
-				if( (origX-destX) > 0 ){
-					setEstado("LEFT");
-				}else{
-					setEstado("RIGHT");
-				}
-			}else if( (origY-destY) < 0){
-				setEstado("DOWN");
-			}else{
-				setEstado("UP");
-			}
+			setEstado("DIE");
 		
 			this.me.getImageV().setX(destX-6);
 			this.me.getImageV().setY(destY-6);
