@@ -78,14 +78,9 @@ public class PacManScene extends Application{
 
 		Stage window = primaryStage;
 		this.root = new Group();
-		
-		//Sprite pac = new Sprite("./imagenes/PM_",4, false, "RIGHT", origen.getX(), origen.getY());	
-		//Sprite rGhost = new Sprite("./imagenes/GHR_",2, false, "RIGHT",origen.getX(), origen.getY());
 
 		this.principal = new Scene(root, 224, 248 );
-		//File f = new File("./imagenes/Tablero.png");
 		this.principal.setFill( new ImagePattern( new Image( new File("./imagenes/Tablero0.png").toURI().toString())));
-		//this.principal.setFill(Color.BLACK);
 		
 		this.principal.setOnKeyPressed( new EventHandler<KeyEvent>() {
 			
@@ -228,8 +223,8 @@ public class PacManScene extends Application{
 		pac.start();
 		blinky.start();
 		inky.start();
-		//pinky.start();
-		//clyde.start();
+		pinky.start();
+		clyde.start();
 
 	}
 
