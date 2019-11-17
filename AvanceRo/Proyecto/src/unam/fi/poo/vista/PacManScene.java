@@ -181,11 +181,11 @@ public class PacManScene extends Application{
 					pac.endChase(current);
 					
 					if(start == 0){
-						Thread g1 = new Thread(inky);
+						Thread g1 = new Thread(clyde);
 						g1.start();
 						start--;
 					}else if(start == 2){
-						Thread g2 = new Thread(blinky);
+						Thread g2 = new Thread(inky);
 						g2.start();
 						start--;
 					}else if(start == 4){
@@ -193,7 +193,7 @@ public class PacManScene extends Application{
 						g3.start();
 						start--;
 					}else if(start == 6){
-						Thread g4 = new Thread(clyde);
+						Thread g4 = new Thread(blinky);
 						g4.start();
 						start--;
 					}else if(start >= 8){
@@ -204,12 +204,8 @@ public class PacManScene extends Application{
 						start--;
 					}else{
 						start--;
-						/*if(pac.getStatus() == false){
-							System.out.println("GAME OVER");
-							pac.setEstado("DIE");
-						}*/
 					}
-				
+
 					if(root.getChildren().contains(destino.getCircle())){
 						root.getChildren().remove(destino.getCircle());
 					}

@@ -102,7 +102,7 @@ public class Ghost implements Runnable{
 		
 		long finish = System.currentTimeMillis();
 
-		if((finish - start) >= 250){
+		if((finish - start) >= 150){
 		
 			if(this.name.equals("blinky")){
 				moverBlinky();
@@ -148,7 +148,7 @@ public class Ghost implements Runnable{
 		
 		Vertex pac = pacMan.getOrigen();
 		
-		if(this.movement >= 2){
+		if(this.movement >= 4){
 			this.movimientos=obtenerMovimineto(pac);
 			this.movement = 0;
 		}
@@ -159,7 +159,7 @@ public class Ghost implements Runnable{
 		
 		Vertex pac = pacMan.getOrigen();
 		
-		if(this.movement >= 2){
+		if(this.movement >= 4){
 			
 			Vertex destinoMasUno = pac;
 			Vertex destinoMasDos = pac;
@@ -199,7 +199,7 @@ public class Ghost implements Runnable{
 		boolean done = true;
 		
 		if(obtenerMovimineto(pac).size() > 8 && this.movement >= 2){
-			this.movimientos = obtenerMovimineto(pac);
+			moverBlinky();
 			this.movement = 0;
 		}else if(obtenerMovimineto(pac).size() <= 8  && this.movement >= 2){
 			this.movimientos = obtenerMovimineto(tablero.getVertex("729"));
@@ -213,7 +213,7 @@ public class Ghost implements Runnable{
 		
 		Vertex pac = pacMan.getOrigen();
 		
-		if(this.movement >= 2){
+		if(this.movement >= 4){
 			this.movimientos=obtenerMovimineto(pac);
 			this.movement = 0;
 		}
@@ -227,7 +227,7 @@ public class Ghost implements Runnable{
 	}
 	
 	public long escape(long start){
-		if(this.movement >= 2 && this.movimientos.size() > 2){
+		if(this.movement >= 6 && this.movimientos.size() > 1){
 			this.movimientos = obtenerMovimineto(this.pacMan.getOrigen());
 		}
 		Random rand = new Random();
@@ -269,7 +269,7 @@ public class Ghost implements Runnable{
 			}
 		}
 		
-		if(escaping && this.movement >= 2 && escape != null && this.origen.getNeighbors().contains(escape)){
+		if(escaping && this.movement >= 6 && escape != null && this.origen.getNeighbors().contains(escape)){
 			double origX = this.origen.getX();
 			double origY = this.origen.getY();
 			
@@ -316,13 +316,17 @@ public class Ghost implements Runnable{
 			if(origY == destY){
 				if( (origX-destX) > 0 ){
 					setEstado("LEFT");
+					this.direction = 1;
 				}else{
 					setEstado("RIGHT");
+					this.direction = 0;
 				}
 			}else if( (origY-destY) < 0){
 				setEstado("DOWN");
+				this.direction = 2;
 			}else{
 				setEstado("UP");
+				this.direction = 3;
 			}
 		
 			this.me.getImageV().setX(destX-6);
@@ -331,10 +335,6 @@ public class Ghost implements Runnable{
 		
 			this.movement++;
 		}
-		else{
-			this.movement = 2;
-		}
-		
 	}
 	
 	public void setFrightened(boolean frightened){

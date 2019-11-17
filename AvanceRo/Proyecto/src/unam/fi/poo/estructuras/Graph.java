@@ -78,7 +78,7 @@ public class Graph{
 		}
 	}
 
-	public void BSF(Vertex start){
+	public void BSF(Vertex start, Vertex end){
 		for( Vertex v: this.vertices.values()){
 			v.setColor( Colors.BLACK);
 			v.setDistance(0);
@@ -100,6 +100,9 @@ public class Graph{
 					w.setDistance(v.getDistance()+1);
 					w.setPredecesor(v.getName());
 					q.addLast(w);
+					if(w.getName().equals(end.getName())){
+						return;
+					}
 				}
 			}
 			v.setColor(Colors.WHITE);
@@ -154,14 +157,11 @@ public class Graph{
 	private void gotoVertex(Vertex v1, String _v2, ArrayDeque<String> pila){
 
 		Vertex v2 = this.vertices.get(_v2);
-
-		if(v1 != null && v2 != null){
-
-			if( !v2.getPredecesor().equals( v1.getName() )){
-				pila.push(v2.getPredecesor() );
-				gotoVertex( v1, v2.getPredecesor(), pila);
-			}
+		while( v2.getIntName() != v1.getIntName() ){
+			pila.push(v2.getPredecesor());
+			v2 = getVertex(v2.getPredecesor());
 		}
+
 	}
 
 	public ArrayDeque<String> goToVertex( String _v1, String _v2){
@@ -169,7 +169,7 @@ public class Graph{
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 );
+		BSF( v1 , v2);
 		
 		ArrayDeque<String> pila = new ArrayDeque<String>();
 
@@ -179,7 +179,8 @@ public class Graph{
 
 			if( !v2.getPredecesor().equals( v1.getName() )){
 				pila.push(v2.getPredecesor() );
-				gotoVertex( v1, v2.getPredecesor(), pila);
+				if(v2.getDistance()!= 0)
+					gotoVertex( v1, v2.getPredecesor(), pila);
 			}
 
 			pila.push( v1.getName() );
@@ -219,7 +220,7 @@ public class Graph{
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 );
+		BSF( v1 , v2);
 		
 		ArrayDeque<String> pila = new ArrayDeque<String>();
 
@@ -231,7 +232,8 @@ public class Graph{
 
 				if( !neighbor.getName().equals( v1.getName() )){
 					pila.push(v2.getName() );
-					gotoVertex( v1, neighbor.getName(), pila);
+					if(neighbor.getDistance()!= 0)
+						gotoVertex( v1, neighbor.getName(), pila);
 				}
 				this.movimientos.add( pila );
 				this.tiempos.add(pila.size());
