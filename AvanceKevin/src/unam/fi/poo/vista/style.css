@@ -1,0 +1,28 @@
+
+.root{
+	-fx-background-color: black;
+	-fx-border-color: blue, blue;
+	-fx-border-radius: 10px;
+	-fx-border-insets: 1px, 4px;
+	-fx-border-width: 1px, 1px;
+}
+
+.button{
+	-fx-background-color: transparent;
+	-fx-text-fill: yellow;
+	-fx-border-color: blue, blue;
+	-fx-border-insets: 1px, 4px;
+	-fx-border-radius: 5px;
+}
+
+.label{
+	-fx-text-fill: yellow;
+	-fx-alignment: center;
+	-fx-text-alignment: center;
+}
+
+.text{
+	-fx-font-family:"Purisa";
+	-fx-font-size: 14;
+}
+

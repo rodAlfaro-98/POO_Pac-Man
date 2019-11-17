@@ -1,112 +1,144 @@
 
 package unam.fi.poo.objetos;
 
-import javafx.animation.AnimationTimer;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import java.io.File;
 import java.util.ArrayList;
+import javafx.scene.image.Image;
 
-public class Sprite extends AnimationTimer{
+public class Sprite{
 
-	private ImageView imageV;
+	private final String RUTA_IMAGEN = "./imagenes/Clasic/";
+	private String name;
+	private int numFramesO, numFramesD;
+	private long lastFrame;
+	private int fps;
 	private ArrayList<Image> framesUP;
 	private ArrayList<Image> framesDOWN;
 	private ArrayList<Image> framesLEFT;
 	private ArrayList<Image> framesRIGTH;
+	private ArrayList<Image> framesFEAR;
 	private ArrayList<Image> framesDIE;
-	private String nameImage;
-	private int numFrames;
-	private long lastFrame;
-	private int fps = 4;
-	private String estado;
-	private boolean automatico;
+	private ArrayList<Image> framesEYES;
 
 	public Sprite(){}
 	
-	public Sprite( String _nameFile, int _numFrames, boolean atm, String state, double x, double y ){
-		this.nameImage = _nameFile;
-		this.numFrames = _numFrames;
-		this.automatico = atm;
-		this.estado = state;
-		this.imageV = new ImageView();
-		this.imageV.setX(x);
-		this.imageV.setY(y);
+	public Sprite( String _name, int _numFramesO, int _numFramesD, int _fps){
+		this.name = _name;
+		this.numFramesO = _numFramesO;
+		this.numFramesD = _numFramesD;
+
 		this.framesUP = new ArrayList<Image>();
 		this.framesRIGTH = new ArrayList<Image>();
 		this.framesDOWN = new ArrayList<Image>();
 		this.framesLEFT = new ArrayList<Image>();
+		this.framesFEAR = new ArrayList<Image>();
 		this.framesDIE = new ArrayList<Image>();
+		this.framesEYES = new ArrayList<Image>();
+
 		this.lastFrame = System.nanoTime();
-		cargarImagenes("UP");
-		cargarImagenes("DOWN");
-		cargarImagenes("LEFT");
-		cargarImagenes("RIGHT");
-		cargarImagenes("DIE");
+		this.fps = _fps;
+
+
+		cargarImagenes("_UP", numFramesO);
+		cargarImagenes("_DOWN", numFramesO);
+		cargarImagenes("_LEFT", numFramesO);
+		cargarImagenes("_RIGHT", numFramesO);
+		cargarGhostFear( numFramesD );
+		cargarGhostEyes( numFramesD );
+		cargarImagenes("_DIE", numFramesD );
+
 	}
 
-	private void cargarImagenes( String orientacion ){
+	private void cargarImagenes( String orientacion, int numF ){
 		File f;
-		for( int i = 0; i < numFrames; ++i ){
-			f = new File( nameImage + orientacion + String.valueOf(i) + ".png" );
+		for( int i = 0; i < numF; ++i ){
+			f = new File( RUTA_IMAGEN + name + orientacion + String.valueOf(i) + ".png" );
 				if( f.exists() )
 					switch(orientacion){
-						case "RIGHT":
+						case "_RIGHT":
 							this.framesRIGTH.add( new Image( f.toURI().toString() ) );
 							break;
-						case "LEFT":
+						case "_LEFT":
 							this.framesLEFT.add( new Image( f.toURI().toString() ) );
 							break;
-						case "UP":
+						case "_UP":
 							this.framesUP.add( new Image( f.toURI().toString() ) );
 							break;
-						case "DOWN":
+						case "_DOWN":
 							this.framesDOWN.add( new Image( f.toURI().toString() ) );
 							break;
-						case "DIE":
+						case "_DIE":
 							this.framesDIE.add( new Image( f.toURI().toString() ) );
 							break;
 					}
 		}
 	}
 
-	public void handle( long now ){
-		int frameJump = (int) Math.floor((now - this.lastFrame) / (1000000000 / fps));
+	private void cargarGhostFear( int numF ){
+		File f;
+		for( int i = 0; i < numF; ++i ){
+			f = new File( RUTA_IMAGEN + "GHOST_FEAR" + String.valueOf(i) + ".png" );
+			if( f.exists() )
+				this.framesFEAR.add( new Image( f.toURI().toString() ) );
+		}
+	}
+
+	private void cargarGhostEyes( int numF ){
+		File f;
+		for( int i = 0; i < numF; ++i ){
+			f = new File( RUTA_IMAGEN + "EYES_" + String.valueOf(i) + ".png" );
+			if( f.exists() )
+				this.framesEYES.add( new Image( f.toURI().toString() ) );
+		}
+	}
+
+	public Image getDieImage( int index ){
+		return this.framesDIE.get( index );
+	}
+
+	public Image getLiveImage(){
+		return framesLEFT.get(1);
+	}
+
+	public Image getImageFearBlue( int now ){
+		return framesFEAR.get( ( now % numFramesO ) * 2 );
+	}
+
+	public Image getImageEyes( String orientacion ){
+		switch( orientacion ){
+			case "UP":
+				return framesEYES.get(0);
+			case "DOWN":
+				return framesEYES.get(1);
+			case "RIGHT":
+				return framesEYES.get(2);
+			case "LEFT":
+				return framesEYES.get(3);
+		}
+		return null;
+	}
+	//Funcion para retornar los ojos
+
+	public Image getImage( String status, long now ){
 		
-		if(!automatico){
-			switch(estado){
-				case "RIGHT":
-					this.imageV.setImage( framesRIGTH.get(frameJump % numFrames) );
-					break;
-				case "LEFT":
-					this.imageV.setImage( framesLEFT.get(frameJump % numFrames) );
-					break;
-				case "UP":
-					this.imageV.setImage( framesUP.get(frameJump % numFrames) );
-					break;
-				case "DOWN":
-					this.imageV.setImage( framesDOWN.get(frameJump % numFrames) );
-					break;
-				case "DIE":
-					this.imageV.setImage( framesDIE.get(frameJump % numFrames) );
-			}
+		int frameJump = (int) Math.floor(( now - this.lastFrame) / (1000000000 / fps));
+
+		switch( status ){
+			case "RIGHT":
+				return framesRIGTH.get(frameJump % numFramesO);
+			case "LEFT":
+				return framesLEFT.get(frameJump % numFramesO);
+			case "UP":
+				return framesUP.get(frameJump % numFramesO);
+			case "DOWN":
+				return framesDOWN.get(frameJump % numFramesO);
+			case "FEAR":
+				return framesFEAR.get(frameJump % numFramesD );
+			case "DIE":
+				return framesDIE.get(frameJump % numFramesD );
 		}
-		else{
-			this.imageV.setImage( framesRIGTH.get(frameJump % numFrames) );
-		}
-
-		//System.out.println(frameJump%numFrames);
+		return null;
 	}
 
-	public ImageView getImageV(){
-		return this.imageV;
-	}
 
-	public String getEstado(){
-		return this.estado;
-	}
-
-	public void setEstado( String est ){
-		this.estado = est;
-	}
 }

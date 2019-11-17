@@ -14,6 +14,7 @@ import java.io.File;
 
 public class Vertex{
 
+	private static double dif = 0;
 	private String name;
 	private ArrayList<Vertex> neighbors;
 	private int distance = 0;
@@ -24,15 +25,10 @@ public class Vertex{
 	private int discovery_time;
 	private int finish_time;
 
-	//private double radio = 10;
-	private double x, y;
+	private double x, y, r;
 	private Circle c;
 	private Text nombre;
 	private ArrayList<Line> edges;
-
-	//private File file;
-	//private Image image;
-	//private ImageView imageV;
 
 	public Vertex(){
 		
@@ -42,14 +38,11 @@ public class Vertex{
 		this.name = _name;
 		this.x = x;
 		this.y = y;
+		this.r = r;
 		this.c = new Circle(x,y,r);
 		this.neighbors = new ArrayList<Vertex>();
 		this.edges = new ArrayList<Line>();
 		this.nombre = new Text(x,y,_name);
-		//this.file = new File("./imagenes/Comida.png");
-		//this.image = new Image( file.toURI().toString() );
-		//this.imageV = new ImageView(image);
-		//this.imageV.relocate(x-2,y-2);
 
 	}
 
@@ -57,6 +50,7 @@ public class Vertex{
 		this.name = _name;
 		this.x = x;
 		this.y = y;
+		this.r = r;
 		this.c = new Circle(x,y,r,c);
 		this.neighbors = new ArrayList<Vertex>();
 		this.edges = new ArrayList<Line>();
@@ -76,8 +70,17 @@ public class Vertex{
 		this.edges.add( new Line(x,y,v2.getX(), v2.getY() ) );
 	}
 
-	public void updateColor(){
-		this.c.setFill( Color.RED );
+	public void updateColor( String c ){
+		switch( c ){
+			case "RED":
+				this.c.setFill( Color.RED ); break;
+			case "GREEN":
+				this.c.setFill( Color.GREEN ); break;
+			case "WHITE":
+				this.c.setFill( Color.WHITE ); break;
+			case "YELLOW":
+				this.c.setFill( Color.YELLOW ); break;
+		}
 	}
 
 	public Circle getCircle(){
@@ -92,16 +95,16 @@ public class Vertex{
 
 	public void setY(int y){ this.y = y; }
 
-	public double getX(){ return this.x; }
+	public double getX(){ return this.x-dif; }
 
-	public double getY(){ return this.y; }
+	public double getY(){ return this.y-dif; }
 
 	public String getName(){
 		return this.name;
 	}
 
 	public int getIntName(){
-		return Integer.valueOf(this.name);
+		return Integer.parseInt(this.name);
 	}
 
 	public int getDistance(){
@@ -163,7 +166,7 @@ public class Vertex{
 		}
 		System.out.println();
 	}
-
+	/*
 	public void print(){
 		String color = "";
 		String s = "  ";
@@ -172,9 +175,22 @@ public class Vertex{
 			case GRAY: color = "GRAY"; break;
 			case WHITE: color = "WHITE"; break;
 		}
-		System.out.print(this.name+" -> "+this.predecesor+s+
-			this.distance+s+this.discovery_time+"/"+this.finish_time+s+"\t"+
-			color+s+this.predecesor);
+		//System.out.print(this.name+" -> "+this.predecesor+s+
+		//	this.distance+s+this.discovery_time+"/"+this.finish_time+s+"\t"+
+		//	color+s+this.predecesor);
+		System.out.print(this.name+" ->"+this.neighbors.size());
+
+	}
+	*/
+
+	public void print(){
+		System.out.println( this.name + "[ " + this.x + " , " + this.y + " ]" + this.distance );
+	}
+
+	public String toString(){
+		String s = ":";
+		String data = this.name +s+ this.x +s+ this.y +s+ this.r;
+		return data;
 	}
 
 }

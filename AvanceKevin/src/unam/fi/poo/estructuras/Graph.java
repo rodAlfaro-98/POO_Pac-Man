@@ -4,6 +4,7 @@ package unam.fi.poo.estructuras;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.Stack;
 
 public class Graph{
 
@@ -54,6 +55,9 @@ public class Graph{
 		return false;
 	}
 
+	public int size(){
+		return this.vertices.size();
+	}
 
 	public Vertex getVertex(String vName){
 		return this.vertices.get(vName);
@@ -76,11 +80,12 @@ public class Graph{
 		}
 	}
 
-	public void BSF(Vertex start){
+	public void BSF(Vertex start, Vertex end ){
 		for( Vertex v: this.vertices.values()){
 			v.setColor( Colors.BLACK);
 			v.setDistance(0);
 			v.setPredecesor("Nil");
+			//v.updateColor("WHITE");
 		}
 
 		start.setColor(Colors.WHITE);
@@ -90,13 +95,17 @@ public class Graph{
 
 		while(!q.isEmpty()){
 			Vertex v = q.pollFirst();
+			//v.updateColor("RED");
 			
+			if( v == end ) return;
+
 			for( Vertex w: v.getNeighbors() ){
 
 				if(w.getColor() == Colors.BLACK){
 					w.setColor(Colors.GRAY);
 					w.setDistance(v.getDistance()+1);
 					w.setPredecesor(v.getName());
+					//w.updateColor("RED");
 					q.addLast(w);
 				}
 			}
@@ -134,59 +143,118 @@ public class Graph{
 		dfsTraverse( start );	
 	}
 
-	public void updateColor( ArrayDeque<String> pila){
+	public Vertex goToNextVertexInPath( Vertex v1, Vertex v2 ){
+
+		Vertex temp = new Vertex();
+
+		BSF( v1 , v2 );
 		
-		if( pila != null){
+		if( v1 != null && v2 != null ){
 
-			while(!pila.isEmpty()){
+			temp = v2;
+			String pred = temp.getPredecesor();
 
-				Vertex v1 = this.vertices.get( pila.pollFirst() );
-				
-				if(v1 != null ){
-					v1.updateColor();
+			while( !pred.equals( v1.getName() ) ){
+				temp = getVertex( pred );
+				pred = temp.getPredecesor();
+			}
+		}
+
+		return temp;
+	}
+
+	public Vertex goToDoubleVertexInPath( Vertex v1, int blinkyLen ){
+
+		//BSF( v1 );
+
+		if( v1 != null ){
+			for( Vertex vN : this.vertices.values() ){
+				if( vN.getDistance() == ( 2 * blinkyLen ) ){
+					return vN;
 				}
 			}
 		}
+		return v1;
 	}
 
-	private void gotoVertex(Vertex v1, String _v2, ArrayDeque<String> pila){
+	public Stack<String> goToVertex( String _v1, String _v2 ){
+		Stack<String> pila = new Stack<String>();
 
-		Vertex v2 = this.vertices.get(_v2);
-
-		if(v1 != null && v2 != null){
-
-			if( !v2.getPredecesor().equals( v1.getName() )){
-				pila.push(v2.getPredecesor() );
-				gotoVertex( v1, v2.getPredecesor(), pila);
-			}
-		}
-	}
-
-	public void goToVertex( String _v1, String _v2){
 
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 );
-		
-		ArrayDeque<String> pila = new ArrayDeque<String>();
+		BSF( v1 , v2 );
 
 		if(v1 != null && v2 != null){
 		
 			pila.push( v2.getName() );
 
+			String v2str = v2.getPredecesor();
+
+			while( !v2str.equals( v1.getName() )){
+				pila.push( v2str );
+				v2str = getVertex( v2str ).getPredecesor();
+				//System.out.println("Pila" + pila);
+			}
+
+			//pila.push( v1.getName() );
+		}
+
+		return pila;
+
+	}
+	
+	private void gotoVertex(Vertex v1, String _v2, Stack<String> pila){
+
+		Vertex v2 = this.vertices.get(_v2);
+
+		if(v1 != null && v2 != null){
+
 			if( !v2.getPredecesor().equals( v1.getName() )){
 				pila.push(v2.getPredecesor() );
 				gotoVertex( v1, v2.getPredecesor(), pila);
+			}
+		}
+	}
+
+	public Stack<String> goToDoubleVertex( String _v1, String _v2, int tam ){
+
+		Stack<String> pila = new Stack<String>();
+		ArrayList<Stack<String>> lista = new ArrayList<>();
+
+		if( _v1.equals( _v2 ) ) return pila;
+
+		Vertex v1 = this.vertices.get(_v1);
+		Vertex v2 = this.vertices.get(_v2);
+
+		//BSF( v1 );
+		
+		if(v1 != null && v2 != null){
+		
+			pila.push( v2.getName() );
+
+			for( Vertex neighbor : v2.getNeighbors() ){
+				if( !neighbor.getName().equals( v1.getName() )){
+					pila.push( v2.getName() );
+					gotoVertex( v1, neighbor.getName(), pila );
+				}
+				lista.add(pila);
 			}
 
 			pila.push( v1.getName() );
 		}
 
-		//System.out.println(" Go "+v1.getName() + " to "+v2.getName());
-		//System.out.println(pila);
+		for( int i = 0; i < lista.size(); ++i ){
+			pila = lista.get( i );
 
-		updateColor( pila );
+			if( pila.size() >= (2*tam) &&
+				_v1.equals( pila.pop() ) ){
+				return pila;
+			}
+		}
+
+		return null;
 
 	}
 	
