@@ -4,14 +4,12 @@ package unam.fi.poo.estructuras;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.Stack;
 
 public class Graph{
 
 	private HashMap<String, Vertex> vertices;
 	private static int time;
-
-	private ArrayList<Integer> tiempos = new ArrayList<Integer>();
-	private ArrayList<ArrayDeque<String>> movimientos = new ArrayList<>();
 
 	public Graph(){
 		this.vertices = new HashMap<String, Vertex>();
@@ -57,6 +55,9 @@ public class Graph{
 		return false;
 	}
 
+	public int size(){
+		return this.vertices.size();
+	}
 
 	public Vertex getVertex(String vName){
 		return this.vertices.get(vName);
@@ -75,14 +76,16 @@ public class Graph{
 		for( Vertex v : this.vertices.values()){
 			v.print();
 			System.out.println();
+			//v.printNeighbors();
 		}
 	}
 
-	public void BSF(Vertex start, Vertex end){
+	public void BSF(Vertex start, Vertex end ){
 		for( Vertex v: this.vertices.values()){
 			v.setColor( Colors.BLACK);
 			v.setDistance(0);
 			v.setPredecesor("Nil");
+			//v.updateColor("WHITE");
 		}
 
 		start.setColor(Colors.WHITE);
@@ -92,17 +95,18 @@ public class Graph{
 
 		while(!q.isEmpty()){
 			Vertex v = q.pollFirst();
+			//v.updateColor("RED");
 			
+			if( v == end ) return;
+
 			for( Vertex w: v.getNeighbors() ){
 
 				if(w.getColor() == Colors.BLACK){
 					w.setColor(Colors.GRAY);
 					w.setDistance(v.getDistance()+1);
 					w.setPredecesor(v.getName());
+					//w.updateColor("RED");
 					q.addLast(w);
-					if(w.getName().equals(end.getName())){
-						return;
-					}
 				}
 			}
 			v.setColor(Colors.WHITE);
@@ -139,48 +143,59 @@ public class Graph{
 		dfsTraverse( start );	
 	}
 
-	public void updateColor( ArrayDeque<String> pila){
+	public Vertex goToNextVertexInPath( Vertex v1, Vertex v2 ){
+
+		Vertex temp = new Vertex();
+
+		BSF( v1 , v2 );
 		
-		if( pila != null){
+		if( v1 != null && v2 != null ){
 
-			while(!pila.isEmpty()){
+			temp = v2;
+			String pred = temp.getPredecesor();
 
-				Vertex v1 = this.vertices.get( pila.pollFirst() );
-				
-				if(v1 != null ){
-					v1.updateColor();
+			while( !pred.equals( v1.getName() ) ){
+				temp = getVertex( pred );
+				pred = temp.getPredecesor();
+			}
+		}
+
+		return temp;
+	}
+
+	public Vertex goToDoubleVertexInPath( Vertex v1, int blinkyLen ){
+
+		//BSF( v1 );
+
+		if( v1 != null ){
+			for( Vertex vN : this.vertices.values() ){
+				if( vN.getDistance() == ( 2 * blinkyLen ) ){
+					return vN;
 				}
 			}
 		}
+		return v1;
 	}
 
-	private void gotoVertex(Vertex v1, String _v2, ArrayDeque<String> pila){
+	public Stack<String> goToVertex( String _v1, String _v2 ){
+		Stack<String> pila = new Stack<String>();
 
-		Vertex v2 = this.vertices.get(_v2);
-		while( v2.getIntName() != v1.getIntName() ){
-			pila.push(v2.getPredecesor());
-			v2 = getVertex(v2.getPredecesor());
-		}
-
-	}
-
-	public ArrayDeque<String> goToVertex( String _v1, String _v2){
 
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 , v2);
-		
-		ArrayDeque<String> pila = new ArrayDeque<String>();
+		BSF( v1 , v2 );
 
 		if(v1 != null && v2 != null){
 		
 			pila.push( v2.getName() );
 
-			if( !v2.getPredecesor().equals( v1.getName() )){
-				pila.push(v2.getPredecesor() );
-				if(v2.getDistance()!= 0)
-					gotoVertex( v1, v2.getPredecesor(), pila);
+			String v2str = v2.getPredecesor();
+
+			while( !v2str.equals( v1.getName() )){
+				pila.push( v2str );
+				v2str = getVertex( v2str ).getPredecesor();
+				//System.out.println("Pila" + pila);
 			}
 
 			pila.push( v1.getName() );
@@ -190,19 +205,34 @@ public class Graph{
 
 	}
 	
-	public ArrayDeque<String> goToDouble(String v1, String v2, int tam){
+	private void gotoVertex(Vertex v1, String _v2, Stack<String> pila){
+
+		Vertex v2 = this.vertices.get(_v2);
+
+		if(v1 != null && v2 != null){
+
+			if( !v2.getPredecesor().equals( v1.getName() )){
+				pila.push(v2.getPredecesor() );
+				gotoVertex( v1, v2.getPredecesor(), pila);
+			}
+		}
+	}
+
+	public Stack<String> goToDouble(String v1, String v2, int tam){
 		
-		initializeVisit();
+		//initializeVisit();
 		
-		goToDoubleVertex(v1,v2);
+		ArrayList<Stack<String>> movimientos = new ArrayList<Stack<String>>();
 		
-		for(int i = 0; i < this.movimientos.size(); i++){
+		goToDoubleVertex(v1,v2,movimientos);
+		
+		for(int i = 0; i < movimientos.size(); i++){
 			
-			ArrayDeque<String> actual = this.movimientos.get(i);
+			Stack<String> actual = movimientos.get(i);
 			
-			if( actual.size()>=(2*tam) && (actual.getFirst() == v1)){
+			if( actual.size()>=(1.2*tam) && actual.peek().equals(v1)){
 				
-				//System.out.println("tam: "+tam+"; tam lista: "+actual.size());
+				System.out.println("tam: "+tam+"; tam lista: "+actual.size());
 				
 				return actual;
 			}
@@ -215,14 +245,14 @@ public class Graph{
 		
 	}
 	
-	public void goToDoubleVertex( String _v1, String _v2){
+	public void goToDoubleVertex( String _v1, String _v2, ArrayList<Stack <String>> movimientos){
 
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
 		BSF( v1 , v2);
 		
-		ArrayDeque<String> pila = new ArrayDeque<String>();
+		Stack<String> pila = new Stack<String>();
 
 		if(v1 != null && v2 != null){
 		
@@ -235,8 +265,8 @@ public class Graph{
 					if(neighbor.getDistance()!= 0)
 						gotoVertex( v1, neighbor.getName(), pila);
 				}
-				this.movimientos.add( pila );
-				this.tiempos.add(pila.size());
+				movimientos.add( pila );
+				//this.tiempos.add(pila.size());
 			}
 			
 			pila.push( v1.getName() );
@@ -247,7 +277,7 @@ public class Graph{
 	
 	public void initializeVisit(){
 		for(Vertex value : this.vertices.values()){
-			value.setVisited(false);
+			//value.setVisited(false);
 		}	
 	}
 	
