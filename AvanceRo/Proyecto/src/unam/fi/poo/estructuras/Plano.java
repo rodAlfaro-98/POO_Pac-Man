@@ -171,7 +171,7 @@ public class Plano extends Graph{
 	}
 
 	public Stack<String> getDoublePathTo( Vertex v1, Vertex v2, int tam ){
-		return super.goToDouble( v1.getName(), v2.getName(), tam );
+		return super.goToDoubleVertex( v1.getName(), v2.getName(), tam );
 	}
 
 	public void createGraph(){

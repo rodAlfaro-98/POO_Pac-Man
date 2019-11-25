@@ -153,10 +153,15 @@ public class Graph{
 
 			temp = v2;
 			String pred = temp.getPredecesor();
+			
+			try{
 
-			while( !pred.equals( v1.getName() ) ){
-				temp = getVertex( pred );
-				pred = temp.getPredecesor();
+				while( !pred.equals( v1.getName() )){
+					temp = getVertex( pred );
+					pred = temp.getPredecesor();
+				}
+			}catch(Exception e){
+				
 			}
 		}
 
@@ -217,45 +222,19 @@ public class Graph{
 			}
 		}
 	}
-
-	public Stack<String> goToDouble(String v1, String v2, int tam){
-		
-		//initializeVisit();
+	
+	public Stack<String> goToDoubleVertex( String _v1, String _v2, int tam ){
 		
 		ArrayList<Stack<String>> movimientos = new ArrayList<Stack<String>>();
-		
-		goToDoubleVertex(v1,v2,movimientos);
-		
-		for(int i = 0; i < movimientos.size(); i++){
-			
-			Stack<String> actual = movimientos.get(i);
-			
-			if( actual.size()>=(1.2*tam) && actual.peek().equals(v1)){
-				
-				System.out.println("tam: "+tam+"; tam lista: "+actual.size());
-				
-				return actual;
-			}
-			
-		}
-		
-		return null;
-		
-		
-		
-	}
-	
-	public void goToDoubleVertex( String _v1, String _v2, ArrayList<Stack <String>> movimientos){
 
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
 		BSF( v1 , v2);
-		
-		Stack<String> pila = new Stack<String>();
 
 		if(v1 != null && v2 != null){
 		
+			Stack<String> pila = new Stack<String>();
 			pila.push( v2.getName() );
 
 			for( Vertex neighbor : v2.getNeighbors() ){
@@ -265,20 +244,29 @@ public class Graph{
 					if(neighbor.getDistance()!= 0)
 						gotoVertex( v1, neighbor.getName(), pila);
 				}
+				
+				pila.push( v1.getName() );
 				movimientos.add( pila );
 				//this.tiempos.add(pila.size());
 			}
 			
-			pila.push( v1.getName() );
 
 		}
-
-	}
-	
-	public void initializeVisit(){
-		for(Vertex value : this.vertices.values()){
-			//value.setVisited(false);
+		
+		for(Stack<String> pila : movimientos){
+			if(movimientos.size()>2){
+				if(pila.size() > 1.5*tam){
+					return pila;
+				}
+					
+			}else {
+				if(pila.size()>=tam){
+					return pila;
+				}
+			}
 		}	
+		return null;
+
 	}
 	
 }

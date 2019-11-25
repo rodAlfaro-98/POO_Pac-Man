@@ -44,6 +44,9 @@ public class Ghost extends AnimationTimer {
 	private double destinoX = 0.0, destinoY = 0.0;
 	private Stack<String> movimientos;
 	private int movement = 0;
+	private long timer;
+	private boolean scatter;
+	private Stack<String> scatterPath;
 
 
 	public Ghost( String name, Plano g, String v0 ){
@@ -66,7 +69,10 @@ public class Ghost extends AnimationTimer {
 		this.state = this.nombre;
 		
 		this.movimientos = new Stack<String>();
-
+		this.timer=System.currentTimeMillis();
+		this.scatter=false;
+		this.scatterPath = new Stack<String>();
+		
 	}
 
 	public Bounds getBounds(){
@@ -220,6 +226,9 @@ public class Ghost extends AnimationTimer {
 
 		if( this.firstTime ){
 			
+			this.scatter = false;
+			this.timer = System.currentTimeMillis();
+			
 			this.tTransition.setDuration( Duration.millis( VELOCIDAD_HOME ) );
 			
 			this.stackPath = plano.getPathTo(
@@ -279,11 +288,6 @@ public class Ghost extends AnimationTimer {
 				this.pacVertex, 3, this.pacOrientacion, true );
 		}
 
-		//this.stackPath = this.plano.getPathTo(
-		//	this.initVertex, this.endVertex );
-			
-		//this.endVertex = plano.getVertex( this.stackPath.pop() );
-
 		this.endVertex = this.plano.goToNextVertexInPath(
 			this.initVertex, this.pacVertex );
 		
@@ -292,16 +296,33 @@ public class Ghost extends AnimationTimer {
 
 	public void playInkyPath(){
 
-		if(movement >=4 || this.initVertex.getName() == this.startVertex.getName() ){
-			this.movimientos = this.plano.getDoublePathTo(
-			this.plano.goToNextVertexInPath(this.initVertex,this.pacVertex), this.pacVertex, this.blinkyLenPath);
-			this.movement = 0;
-		}
-		this.initVertex = this.endVertex = this.plano.getVertex(this.movimientos.pop());
-	
-		moveGhost();
+		Stack<String> movimiento = null;
+		//if(movement >=4 || this.initVertex.getName() == this.startVertex.getName() ){
+			String mover = null;
+			Vertex nextVertex = this.plano.goToNextVertexInPath(this.initVertex,this.pacVertex);
+			
+			if(nextVertex != null)
+				movimiento = this.plano.getDoublePathTo(nextVertex,this.pacVertex, this.blinkyLenPath);
+			
+			if(movimiento != null)
+				mover = movimiento.peek();
+			//this.movement = 0;
+		//}
 		
-		movement++;
+		/*if(mover != null){
+			this.movimientos=mover;
+		}
+		
+		System.out.println(this.movement);
+		if(!this.endVertex.getName().equals(this.pacVertex.getName())){
+			this.endVertex = this.plano.getVertex(this.movimientos.pop());*/
+			if(mover != null){
+				this.endVertex = this.plano.getVertex(mover);
+				moveGhost();
+			}
+		
+			//movement++;
+		//} else{ this.movement = 4;}
 		
 	}
 
@@ -315,12 +336,75 @@ public class Ghost extends AnimationTimer {
 		this.endVertex = this.plano.goToNextVertexInPath(
 			this.initVertex, this.pacVertex );
 
-		if( this.pacVertex.getDistance() <= 8 ){
-			this.endVertex = this.plano.goToNextVertexInPath(
-				this.initVertex, this.plano.getVertex("729") );
+		if( this.pacVertex.getDistance() <= 8){
+			if(this.initVertex.getName().equals("729"))
+				this.endVertex = this.plano.goToNextVertexInPath(
+					this.initVertex, this.plano.getVertex("662") );
+			else
+				this.endVertex = this.plano.goToNextVertexInPath(
+					this.initVertex, this.plano.getVertex("729") );
 		}
 
 		moveGhost();
+	}
+
+	public void Scatter(){
+		//System.out.println(this.nombre);
+		//System.out.println(System.currentTimeMillis() - this.timer);
+		switch(this.nombre){
+			case "BLINKY":
+				if((System.currentTimeMillis() - this.timer) <5 || this.initVertex.getName().equals("1")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex, 
+						this.plano.getVertex("116")),this.plano.getVertex("116"));
+				}else if(this.initVertex.getName().equals("116")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex,
+						this.plano.getVertex("1")),this.plano.getVertex("1"));
+				}
+				break;
+			case "PINKY":
+				if((System.currentTimeMillis() - this.timer) <5 || this.initVertex.getName().equals("26")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex, 
+						this.plano.getVertex("119")),this.plano.getVertex("119"));
+				}else if(this.initVertex.getName().equals("119")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex, 
+						this.plano.getVertex("26")),this.plano.getVertex("26"));
+				}
+				break;
+			case "CLYDE":
+				if((System.currentTimeMillis() - this.timer) <5 || this.initVertex.getName().equals("729")){
+				this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex,	
+					this.plano.getVertex("662")),this.plano.getVertex("662"));
+				}else if(this.initVertex.getName().equals("662")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex, 
+						this.plano.getVertex("729")),this.plano.getVertex("729"));
+				}
+				break;
+			case "INKY":
+				if((System.currentTimeMillis() - this.timer) <5 || this.initVertex.getName().equals("754")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex, 
+						this.plano.getVertex("665")),this.plano.getVertex("665"));
+				}else  if(this.initVertex.getName().equals("665")){
+					this.scatterPath = this.plano.getPathTo(this.plano.goToNextVertexInPath(this.initVertex, 
+						this.plano.getVertex("754")),this.plano.getVertex("754"));
+				}
+				break;
+		}
+		this.endVertex = this.plano.getVertex(this.scatterPath.pop());
+		moveGhost();
+	}
+
+	public void seeIfScatter(){
+		long now = System.currentTimeMillis();
+				
+		if(this.scatter == false && (now - this.timer) >= 4000){
+			this.scatter = true;
+			this.timer = System.currentTimeMillis();
+		}
+		if(this.scatter == true && (now - this.timer) >= 7000){
+			this.scatter = false;
+			this.timer = System.currentTimeMillis();
+		}
+		
 	}
 
 	public void handle( long now ){
@@ -330,19 +414,27 @@ public class Ghost extends AnimationTimer {
 				
 				setOrigen();
 				
-				switch( this.state ){
-					case "BLINKY":
-						playBlinkyPath(); break;
-					case "PINKY":
-						playPinkyPath(); break;
-					case "CLYDE":
-						playClydePath(); break;
-					case "INKY":
-						playInkyPath(); break;
-					case "FEAR":
-						playOnFearPath(); break;
-					case "HOME":
-						playToHomePath(); break;
+				if(!this.state.equals("FEAR") && !this.state.equals("HOME"));
+					seeIfScatter();
+				
+				if(scatter){
+					Scatter();
+				}else{
+				
+					switch( this.state ){
+						case "BLINKY":
+							playBlinkyPath(); break;
+						case "PINKY":
+							playPinkyPath(); break;
+						case "CLYDE":
+							playClydePath(); break;
+						case "INKY":
+							playInkyPath(); break;
+						case "FEAR":
+							playOnFearPath(); break;
+						case "HOME":
+							playToHomePath(); break;
+					}
 				}
 				setOrientacion();
 				setImageOrientation( now );

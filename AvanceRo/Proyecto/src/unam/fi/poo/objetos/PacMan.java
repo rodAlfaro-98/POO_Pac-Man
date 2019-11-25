@@ -240,6 +240,8 @@ public class PacMan extends AnimationTimer{
 			
 		this.initVertex = this.endVertex;
 
+		//System.out.println(this.initVertex.getName());
+
 		this.tt.play();
 	}
 
