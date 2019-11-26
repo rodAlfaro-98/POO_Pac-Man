@@ -9,10 +9,15 @@
 ./src/unam/fi/poo/estructuras/Vertex.java
 ./src/unam/fi/poo/eventos/ManejadorEventos.java
 ./src/unam/fi/poo/objetos/Administrador.java
+./src/unam/fi/poo/objetos/Blinky.java
+./src/unam/fi/poo/objetos/Clyde.java
 ./src/unam/fi/poo/objetos/Ghost.java
 ./src/unam/fi/poo/objetos/GhostException.java
+./src/unam/fi/poo/objetos/Ghost_Backup.java
+./src/unam/fi/poo/objetos/Inky.java
 ./src/unam/fi/poo/objetos/Jugador.java
 ./src/unam/fi/poo/objetos/PacMan.java
+./src/unam/fi/poo/objetos/Pinky.java
 ./src/unam/fi/poo/objetos/Sprite.java
 ./src/unam/fi/poo/vista/CreditsGrid.java
 ./src/unam/fi/poo/vista/GameScene.java

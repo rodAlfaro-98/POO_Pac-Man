@@ -18,6 +18,10 @@ import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
 import unam.fi.poo.objetos.PacMan;
 import unam.fi.poo.objetos.Ghost;
+import unam.fi.poo.objetos.Blinky;
+import unam.fi.poo.objetos.Inky;
+import unam.fi.poo.objetos.Clyde;
+import unam.fi.poo.objetos.Pinky;
 
 //import unam.fi.poo.eventos.ManejadorEventos;
 import unam.fi.poo.controles.Grupo;
@@ -50,10 +54,10 @@ public class GameScene extends Scene{
 		initGraph();
 
 		this.pacMan = new PacMan("PACMAN", this.plano, "586" );
-		this.blinky = new Ghost("BLINKY", this.plano, "274" );
-		this.clyde = new Ghost("CLYDE", this.plano, "349");
-		this.pinky = new Ghost("PINKY", this.plano, "351");
-		this.inky = new Ghost("INKY", this.plano, "353");
+		this.blinky = new Blinky(this.plano, "274" );
+		this.clyde = new Clyde(this.plano, "349");
+		this.pinky = new Pinky(this.plano, "351");
+		this.inky = new Inky(this.plano, "353");
 
 		this.pacMan.addGhost( this.blinky );
 		this.pacMan.addGhost( this.pinky );

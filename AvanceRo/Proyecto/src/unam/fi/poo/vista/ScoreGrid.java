@@ -83,7 +83,7 @@ public class ScoreGrid extends GridPane {
 		
 		sendScore();
 		
-		showScores();
+		//showScores();
 	}
 
 	public Boton getSaveButton(){
@@ -165,7 +165,7 @@ public class ScoreGrid extends GridPane {
 		
 	}
 	
-	public void showScores(){
+	/*public void showScores(){
 	
 		String scores = "";
 	
@@ -178,5 +178,5 @@ public class ScoreGrid extends GridPane {
 		
 		//thread.sleep(1000);
 		
-	}
+	}*/
 }
