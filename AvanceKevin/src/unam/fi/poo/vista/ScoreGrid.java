@@ -3,6 +3,8 @@ package unam.fi.poo.vista;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,6 +20,8 @@ import unam.fi.poo.controles.CajaDeTexto;
 import unam.fi.poo.controles.Boton;
 import unam.fi.poo.eventos.ManejadorEventos;
 import unam.fi.poo.objetos.Administrador;
+import unam.fi.poo.objetos.Jugador;
+
 
 public class ScoreGrid extends GridPane {
 	
@@ -36,13 +40,13 @@ public class ScoreGrid extends GridPane {
 		getStylesheets().add(
 			new File("./src/unam/fi/poo/vista/style.css").toURI().toString());
 		this.admon = new Administrador();
-		this.highScores = admon.getMapScores();
 
 		this.encabezado = new Etiqueta("Your Score: ");		
 		//datos del formulario
 		this.nameLbl = new Etiqueta("Name: ");
 		this.nameLbl.setAlignment(Pos.CENTER_RIGHT);
 		this.nameTxt = new CajaDeTexto();
+		this.nameTxt.setMaxWidth(120);
 		
 		this.registrarBtn = new Boton("Save", me );
 		
@@ -57,18 +61,30 @@ public class ScoreGrid extends GridPane {
 		super.add(this.nameTxt,1,0);
 	
 		super.add(crearCajaH(botones, Pos.TOP_CENTER,10),0,2,2,1);
+
+		this.highScores = new HashMap<String, Integer>();
+
+		loadScore();
+
 	}
 
 	public void saveScore(){
 
-		if( this.nameTxt.getText() != null )
-			if( this.highScores.containsKey(this.nameTxt.getText()) )
+		if( this.nameTxt.getText() != null ){
+			if( this.highScores.containsKey(this.nameTxt.getText()) &&
+			this.score > this.highScores.get(this.nameTxt.getText()) ){
 				this.highScores.replace( this.nameTxt.getText(), this.score );
-			else
+			}
+			else{
 				this.highScores.put(this.nameTxt.getText(), this.score);
+			}
+		}
 
-		//this.admon.saveScore( String.valueOf( this.score ) );
-		System.out.println( this.highScores);
+		getBestFive();
+		
+		sendScore();
+
+		this.nameTxt.clear();		
 	}
 
 	public Boton getSaveButton(){
@@ -92,6 +108,27 @@ public class ScoreGrid extends GridPane {
 	public int getScore(){
 		return this.score;
 	}
+	
+	public void getBestFive(){
+	
+		HashMap<Integer, String> allScores = new HashMap<Integer, String>();
+		ArrayList<Integer> toSort = new ArrayList<Integer>();
+		
+		for(String name : this.highScores.keySet()){
+			allScores.put(this.highScores.get(name), name);
+			toSort.add(this.highScores.get(name));
+		}
+		
+		Collections.sort(toSort, Comparator.reverseOrder() );
+		
+		this.highScores.clear();
+
+		for( int i = 0; i < 5; i++ ){
+			Integer score = toSort.get( i );
+			this.highScores.put( allScores.get( score ), score );
+		}
+	
+	}
 
 	private HBox crearCajaH(Node nodo, Pos posicion, double espacio){
 		HBox hbox = null;
@@ -103,4 +140,25 @@ public class ScoreGrid extends GridPane {
 		
 		return hbox;
 	}
+	
+	public void loadScore(){
+				
+		for(Jugador x : this.admon.getScore()){
+			this.highScores.put(x.getName(), x.getScore());
+		}	
+	}
+	
+	public void sendScore(){
+		
+		ArrayList<Jugador> loadScore = new ArrayList<Jugador>();
+		
+		for(String name : this.highScores.keySet()){
+			Jugador x = new Jugador(name, this.highScores.get(name));
+			loadScore.add(x);
+		}
+		
+		this.admon.saveScore(loadScore);
+		
+	}
+
 }

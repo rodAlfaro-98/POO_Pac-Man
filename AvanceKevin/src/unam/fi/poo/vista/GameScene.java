@@ -18,6 +18,12 @@ import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
 import unam.fi.poo.objetos.PacMan;
 import unam.fi.poo.objetos.Ghost;
+import unam.fi.poo.objetos.Blinky;
+import unam.fi.poo.objetos.Inky;
+import unam.fi.poo.objetos.Clyde;
+import unam.fi.poo.objetos.Pinky;
+
+import unam.fi.poo.interfaces.GhostClass;
 
 //import unam.fi.poo.eventos.ManejadorEventos;
 import unam.fi.poo.controles.Grupo;
@@ -29,8 +35,9 @@ public class GameScene extends Scene{
 	private int width, height;
 	private Grupo root;
 	private Plano plano;
+	private boolean pause = false;
 	public PacMan pacMan;
-	public Ghost clyde, blinky, inky, pinky;
+	public GhostClass clyde, blinky, inky, pinky;
 
 	public GameScene( Grupo root, int width, int height){
 		
@@ -50,18 +57,17 @@ public class GameScene extends Scene{
 		initGraph();
 
 		this.pacMan = new PacMan("PACMAN", this.plano, "586" );
-		this.blinky = new Ghost("BLINKY", this.plano, "274" );
-		this.clyde = new Ghost("CLYDE", this.plano, "349");
-		this.pinky = new Ghost("PINKY", this.plano, "351");
-		this.inky = new Ghost("INKY", this.plano, "353");
+		this.blinky = new Blinky(this.plano, "274" );
+		this.clyde = new Clyde(this.plano, "349");
+		this.pinky = new Pinky(this.plano, "351");
+		this.inky = new Inky(this.plano, "353");
 
-		this.pacMan.addGhost( this.blinky );
-		this.pacMan.addGhost( this.pinky );
-		//this.pacMan.addGhost( this.inky );
-		this.pacMan.addGhost( this.clyde );
+		this.pacMan.addGhostClass( this.blinky );
+		this.pacMan.addGhostClass( this.pinky );
+		this.pacMan.addGhostClass( this.inky );
+		this.pacMan.addGhostClass( this.clyde );
 
 		this.pacMan.setRoot( this.root );
-
 
 	}
 
@@ -70,7 +76,17 @@ public class GameScene extends Scene{
 		pacMan.start();
 		blinky.start();
 		pinky.start();
+		inky.start();
 		clyde.start();
+	}
+
+	public void stopObjects(){
+
+		pacMan.stop();
+		blinky.stop();
+		pinky.stop();
+		inky.stop();
+		clyde.stop();
 	}
 
 	private void addObjects( Node pp){
@@ -84,9 +100,12 @@ public class GameScene extends Scene{
 		this.plano.addEdge( "339", "364" );
 
 		for(Vertex v : this.plano.getMap().values()){
-			addObjects( v.getCircle() );
+			if( v.getCircle().getRadius() > 0 ){
+				addObjects( v.getCircle() );
+			}
+			else
+				v.getCircle().setVisible(false);
 		}
-
 	}
 
 	private void updateRoot(){
@@ -110,20 +129,28 @@ public class GameScene extends Scene{
                     	pacMan.setOrientacion("LEFT"); break;
 					case RIGHT:
                     	pacMan.setOrientacion("RIGHT"); break;
-                    case R:
-                    {	
-                    	if( !pacMan.isAlive() ){
-                    		pacMan.restartLives();
-							updateRoot();
-						}
-					}
-						break;
+                    case Q:
+                    {
+                    	pacMan.restart();
+                    	pacMan.restartScene();
+                    	pacMan.restartLives();
+                    	root.getManejadorEventos().setMenuScene();
+                    } break;
+                    case P:
+                    	if( !pause ){
+                    		pacMan.pause();
+                    		pause = true;
+                    	}
+                    	else{
+                    		pacMan.play();
+                    		pause = false;
+                    	}
                     case ENTER:
                     	try{
 							pacMan.setIsAlive();
 						}
 						catch( Exception ex){
-							System.out.println("Algo malo pasó");
+							System.out.println("Error!");
 						}
 						break;
 				}

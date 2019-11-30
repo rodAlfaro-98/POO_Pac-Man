@@ -33,21 +33,25 @@ public class Administrador {
 		//setNodos(getNodos());
 	}
 
-	public void saveScore( String score ){
+	public void saveScore( ArrayList<Jugador> scores ){
 		try {
-			BufferedWriter bw= new BufferedWriter(new FileWriter( hScore ,true));			
-			bw.write( score );
-			bw.newLine();
-			bw.flush();
+			BufferedWriter bw= new BufferedWriter(new FileWriter( this.hScore ,false));
+			for(Jugador x : scores){
+				bw.write( x.getDatos() );
+				bw.newLine();
+				bw.flush();
+				//bw.close();
+			}
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
 	}
 
-	public HashMap<String, Integer> getMapScores(){
-		HashMap<String, Integer> mapScores = new HashMap<String, Integer>();
-
+	public ArrayList<Jugador> getScore(){
+		
+		ArrayList<Jugador> scores = new ArrayList<Jugador>();
+		
 		try{
 			String data = "";
 			BufferedReader br;
@@ -55,16 +59,19 @@ public class Administrador {
 
 			file = new File(RUTA_DATOS + NOMBRE_ARCHIVO_SCORE );
 			br = new BufferedReader( new FileReader(file));
-			while((data = br.readLine()) != null ){
+			while((data = br.readLine()) != null && (!data.equals(""))){
 				String []info = data.split(":");
-				mapScores.put(info[0], Integer.valueOf(info[1]));
+				Jugador x = new Jugador(info[0], Integer.valueOf(info[1]));
+				//mapScores.put(info[0], Integer.valueOf(info[1]));
+				scores.add(x);
 			}
 			br.close();
 		}
 		catch( IOException e ){
 			e.printStackTrace();
 		}
-		return mapScores;
+		
+		return scores;
 	}
 	
 	public void saveNode( String linea ){				

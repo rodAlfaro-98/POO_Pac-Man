@@ -13,10 +13,6 @@ public class ManejadorEventos implements EventHandler<ActionEvent>{
 		this.app = app;
 	}
 
-	public Aplicacion getApp(){
-		return this.app;
-	}
-
 	public void handle( ActionEvent e ){
 
 		if( app.getMenuGrid().getPlayButton() == e.getSource() ){
@@ -27,8 +23,10 @@ public class ManejadorEventos implements EventHandler<ActionEvent>{
 		else if( app.getMenuGrid().getCreditsButton() == e.getSource() )
 			app.setScene( app.getCreditsScene() );
 
-		else if( app.getMenuGrid().getHighScoreButton() == e.getSource() )
-			System.out.println( "HighScore" );
+		else if( app.getMenuGrid().getHighScoreButton() == e.getSource() ){
+			app.getHighScoreGrid().showScores();
+			app.setScene( app.getHighScoreScene() );
+		}
 
 		else if( app.getCreditsGrid().getMenuButton() == e.getSource() ||
 			app.getScoreGrid().getCancelButton() == e.getSource() ){
@@ -37,11 +35,25 @@ public class ManejadorEventos implements EventHandler<ActionEvent>{
 
 		else if( app.getScoreGrid().getSaveButton() == e.getSource() ){
 			app.getScoreGrid().saveScore();
+			app.getGameScene().stopObjects();
+			app.setScene( app.getMenuScene() );
+		}
+
+		else if( app.getHighScoreGrid().getCancelButton() == e.getSource() ){
 			app.setScene( app.getMenuScene() );
 		}
 	}
 
-	public void setSceneScore(){
+	public Aplicacion getApp(){
+		return this.app;
+	}
+
+	public void setScoreScene(){
 		app.setScene( app.getScoreScene() );
+	}
+
+	public void setMenuScene(){
+		app.getGameScene().stopObjects();
+		app.setScene( app.getMenuScene() );
 	}
 }

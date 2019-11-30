@@ -11,6 +11,7 @@ import unam.fi.poo.vista.MenuGrid;
 import unam.fi.poo.vista.GameScene;
 import unam.fi.poo.vista.CreditsGrid;
 import unam.fi.poo.vista.ScoreGrid;
+import unam.fi.poo.vista.HighScoreGrid;
 import unam.fi.poo.controles.Grupo;
 import unam.fi.poo.eventos.ManejadorEventos;
 
@@ -18,11 +19,12 @@ public class Aplicacion extends Application{
 	
 	private static final int WIDTH = 224, HEIGHT = 270;
 	public Stage window;
-	public Scene menuScene , creditsScene, scoreScene;
+	public Scene menuScene , creditsScene, scoreScene, highScoreScene;
 	private GameScene gameScene;
 	private Grupo rootGame;
 	private MenuGrid menuGrid;
 	private CreditsGrid creditsGrid;
+	private HighScoreGrid highScoreGrid;
 	private ManejadorEventos me;
 	private ScoreGrid scoreGrid;
 
@@ -32,11 +34,14 @@ public class Aplicacion extends Application{
 		this.menuGrid = new MenuGrid( me );
 		this.creditsGrid = new CreditsGrid( me );
 		this.scoreGrid = new ScoreGrid( me );
+		this.highScoreGrid = new HighScoreGrid( me );
 
 		this.menuScene = new Scene( menuGrid, WIDTH, HEIGHT);
 		this.gameScene = new GameScene(rootGame, WIDTH, HEIGHT ); //224 x 248
 		this.creditsScene = new Scene( creditsGrid, WIDTH, HEIGHT); //224 x 248
 		this.scoreScene = new Scene( scoreGrid, WIDTH, HEIGHT );
+		this.highScoreScene = new Scene( highScoreGrid, WIDTH, HEIGHT );
+
 	}
 
 	public void start(Stage primaryStage){
@@ -69,6 +74,10 @@ public class Aplicacion extends Application{
 		return this.scoreGrid;
 	}
 
+	public HighScoreGrid getHighScoreGrid(){
+		return this.highScoreGrid;
+	}
+
 	public void setScene( Scene sc ){
 		this.window.setScene( sc );
 	}
@@ -87,5 +96,9 @@ public class Aplicacion extends Application{
 
 	public Scene getScoreScene(){
 		return this.scoreScene;
+	}
+
+	public Scene getHighScoreScene(){
+		return this.highScoreScene;
 	}
 }

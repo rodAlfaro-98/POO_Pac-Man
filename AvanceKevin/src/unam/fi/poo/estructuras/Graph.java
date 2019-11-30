@@ -85,7 +85,7 @@ public class Graph{
 			v.setColor( Colors.BLACK);
 			v.setDistance(0);
 			v.setPredecesor("Nil");
-			//v.updateColor("WHITE");
+			//v.updateColor("RED");
 		}
 
 		start.setColor(Colors.WHITE);
@@ -95,9 +95,9 @@ public class Graph{
 
 		while(!q.isEmpty()){
 			Vertex v = q.pollFirst();
-			//v.updateColor("RED");
-			
-			if( v == end ) return;
+			//v.updateColor("WHITE");
+			if( start != end )
+				if( v == end ) return;
 
 			for( Vertex w: v.getNeighbors() ){
 
@@ -156,10 +156,13 @@ public class Graph{
 
 			while( !pred.equals( v1.getName() ) ){
 				temp = getVertex( pred );
-				pred = temp.getPredecesor();
+				if( temp != null)
+					pred = temp.getPredecesor();
+				else
+					break;
 			}
 		}
-
+		//if( temp !=)
 		return temp;
 	}
 
@@ -184,9 +187,9 @@ public class Graph{
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 , v2 );
-
 		if(v1 != null && v2 != null){
+
+			BSF( v1 , v2 );
 		
 			pila.push( v2.getName() );
 
@@ -194,7 +197,10 @@ public class Graph{
 
 			while( !v2str.equals( v1.getName() )){
 				pila.push( v2str );
-				v2str = getVertex( v2str ).getPredecesor();
+				if( getVertex( v2str ) != null )
+					v2str = getVertex( v2str ).getPredecesor();
+				else
+					break;
 				//System.out.println("Pila" + pila);
 			}
 
@@ -228,33 +234,52 @@ public class Graph{
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		//BSF( v1 );
+		BSF( v1, v2 );
 		
 		if(v1 != null && v2 != null){
 		
 			pila.push( v2.getName() );
 
 			for( Vertex neighbor : v2.getNeighbors() ){
-				if( !neighbor.getName().equals( v1.getName() )){
-					pila.push( v2.getName() );
-					gotoVertex( v1, neighbor.getName(), pila );
+				
+				Stack<String> path = new Stack<String>();
+
+				String v2str = v2.getPredecesor();
+
+				while( !v2str.equals( v1.getName() )){
+					path.push( v2str );
+					pila.push( v2str );
+					if( getVertex( v2str ) != null )
+						v2str = getVertex( v2str ).getPredecesor();
+					else
+						break;
+				//System.out.println("Path" + path);
 				}
-				lista.add(pila);
-			}
 
-			pila.push( v1.getName() );
-		}
+				//path.push( v1.getName() );
+				path.push( v2str );
+				pila.push( v2str );
 
-		for( int i = 0; i < lista.size(); ++i ){
-			pila = lista.get( i );
-
-			if( pila.size() >= (2*tam) &&
-				_v1.equals( pila.pop() ) ){
-				return pila;
+				lista.add(path);
 			}
 		}
 
-		return null;
+		//for( int i = 0; i < lista.size(); ++i ){
+		//	pila = lista.get( i );
+
+			//System.out.println( _v1 + " to "+_v2 );
+			//System.out.println(i+" : "+pila);
+			//System.out.println("Size: "+pila.size() +" >> "+ tam);
+
+			//if( lista.get( i ).size() >= (2*tam) &&
+			//	_v1.equals( lista.get( i ).pop() ) ){
+			//	System.out.println( "Elegida "+pila);
+			//	return lista.get( i );
+			//}
+		//}
+
+		//return lista.get(0);
+		return pila;
 
 	}
 	
