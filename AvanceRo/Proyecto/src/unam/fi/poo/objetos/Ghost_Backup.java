@@ -96,7 +96,7 @@ public class Ghost_Backup extends AnimationTimer {
 		return this.state == "FEAR" ;
 	}
 
-	public boolean isToHome(){
+	public boolean goingToHome(){
 		return this.state == "HOME" ;
 	}
 
@@ -125,6 +125,10 @@ public class Ghost_Backup extends AnimationTimer {
 	}
 
 	public void stop(){
+		super.stop();
+	}
+
+	public void stopGhost(){
 		this.isPacManAlive = false;
 		this.tTransition.setOnFinished( new EventHandler<ActionEvent>(){
 			

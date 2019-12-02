@@ -76,7 +76,6 @@ public class Graph{
 		for( Vertex v : this.vertices.values()){
 			v.print();
 			System.out.println();
-			//v.printNeighbors();
 		}
 	}
 
@@ -85,7 +84,6 @@ public class Graph{
 			v.setColor( Colors.BLACK);
 			v.setDistance(0);
 			v.setPredecesor("Nil");
-			//v.updateColor("WHITE");
 		}
 
 		start.setColor(Colors.WHITE);
@@ -95,9 +93,8 @@ public class Graph{
 
 		while(!q.isEmpty()){
 			Vertex v = q.pollFirst();
-			//v.updateColor("RED");
-			
-			if( v == end ) return;
+			if( start != end )
+				if( v == end ) return;
 
 			for( Vertex w: v.getNeighbors() ){
 
@@ -105,7 +102,6 @@ public class Graph{
 					w.setColor(Colors.GRAY);
 					w.setDistance(v.getDistance()+1);
 					w.setPredecesor(v.getName());
-					//w.updateColor("RED");
 					q.addLast(w);
 				}
 			}
@@ -134,7 +130,6 @@ public class Graph{
 
 		for( Vertex v : this.vertices.values() ){
 			v.setColor( Colors.BLACK );
-			//v.setDistance( 0 );
 			v.setPredecesor( "Nil" );
 			v.setFinishTime( 0 );
 			v.setDiscoveryTime( 0 );
@@ -153,24 +148,19 @@ public class Graph{
 
 			temp = v2;
 			String pred = temp.getPredecesor();
-			
-			try{
 
-				while( !pred.equals( v1.getName() )){
-					temp = getVertex( pred );
+			while( !pred.equals( v1.getName() ) ){
+				temp = getVertex( pred );
+				if( temp != null)
 					pred = temp.getPredecesor();
-				}
-			}catch(Exception e){
-				
+				else
+					break;
 			}
 		}
-
 		return temp;
 	}
 
 	public Vertex goToDoubleVertexInPath( Vertex v1, int blinkyLen ){
-
-		//BSF( v1 );
 
 		if( v1 != null ){
 			for( Vertex vN : this.vertices.values() ){
@@ -189,9 +179,9 @@ public class Graph{
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 , v2 );
-
 		if(v1 != null && v2 != null){
+
+			BSF( v1 , v2 );
 		
 			pila.push( v2.getName() );
 
@@ -199,11 +189,11 @@ public class Graph{
 
 			while( !v2str.equals( v1.getName() )){
 				pila.push( v2str );
-				v2str = getVertex( v2str ).getPredecesor();
-				//System.out.println("Pila" + pila);
+				if( getVertex( v2str ) != null )
+					v2str = getVertex( v2str ).getPredecesor();
+				else
+					break;
 			}
-
-			pila.push( v1.getName() );
 		}
 
 		return pila;
@@ -222,50 +212,46 @@ public class Graph{
 			}
 		}
 	}
-	
+
 	public Stack<String> goToDoubleVertex( String _v1, String _v2, int tam ){
-		
-		ArrayList<Stack<String>> movimientos = new ArrayList<Stack<String>>();
+
+		Stack<String> pila = new Stack<String>();
+		ArrayList<Stack<String>> lista = new ArrayList<>();
+
+		if( _v1.equals( _v2 ) ) return pila;
 
 		Vertex v1 = this.vertices.get(_v1);
 		Vertex v2 = this.vertices.get(_v2);
 
-		BSF( v1 , v2);
-
+		BSF( v1, v2 );
+		
 		if(v1 != null && v2 != null){
 		
-			Stack<String> pila = new Stack<String>();
 			pila.push( v2.getName() );
 
 			for( Vertex neighbor : v2.getNeighbors() ){
+				
+				Stack<String> path = new Stack<String>();
 
-				if( !neighbor.getName().equals( v1.getName() )){
-					pila.push(v2.getName() );
-					if(neighbor.getDistance()!= 0)
-						gotoVertex( v1, neighbor.getName(), pila);
+				String v2str = v2.getPredecesor();
+
+				while( !v2str.equals( v1.getName() )){
+					path.push( v2str );
+					pila.push( v2str );
+					if( getVertex( v2str ) != null )
+						v2str = getVertex( v2str ).getPredecesor();
+					else
+						break;
 				}
 				
-				pila.push( v1.getName() );
-				movimientos.add( pila );
-				//this.tiempos.add(pila.size());
-			}
-			
+				path.push( v2str );
+				pila.push( v2str );
 
-		}
-		
-		for(Stack<String> pila : movimientos){
-			if(movimientos.size()>2){
-				if(pila.size() > 1.5*tam){
-					return pila;
-				}
-					
-			}else {
-				if(pila.size()>=tam){
-					return pila;
-				}
+				lista.add(path);
 			}
-		}	
-		return null;
+		}
+
+		return pila;
 
 	}
 	

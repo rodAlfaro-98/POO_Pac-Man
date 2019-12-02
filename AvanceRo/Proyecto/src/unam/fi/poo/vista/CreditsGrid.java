@@ -19,6 +19,9 @@ public class CreditsGrid extends GridPane{
 	private Etiqueta creditos;
 	private Boton regresarBtn;
 
+	/**
+	* @brief Constructor del objeto CreditsGrid, aquí generamos la pantalla de Créditos mostrada al usuario
+	*/
 	public CreditsGrid(){
 		super();
 		super.setAlignment(Pos.CENTER);
@@ -34,23 +37,23 @@ public class CreditsGrid extends GridPane{
 			);
 		
 		this.regresarBtn = new Boton("Menu", ManejadorEventos.getInstance() );
-		
-		/*this.regresarBtn = new Boton("Menu");
-		this.regresarBtn.setOnAction( new EventHandler<ActionEvent>(){
-			public void handle( ActionEvent e ){
-				app.window.setScene(app.menuScene);
-			}
-		});
-		*/
 
 		super.add(crearCajaH( creditos, Pos.CENTER, 10), 0, 0);
 		super.add(crearCajaH( regresarBtn, Pos.CENTER, 10), 0, 1);
 	}
 
+	/**
+	* @brief Getter del atributo MenuButton
+	* @return Un objeto de tipo Botón que contiene a SaveButton
+	*/
 	public Boton getMenuButton(){
 		return this.regresarBtn;
 	}
 
+	/**
+	* @brief Función que nos permite generar un HBox para poder manejar cajas dentro de la ventana
+	* @return Un objeto de tipo HBox
+	*/
 	private HBox crearCajaH(Node nodo, Pos posicion, double espacio){
 		HBox hbox = null;
 		if(nodo !=null && posicion !=null){

@@ -21,11 +21,13 @@ public class MenuGrid extends GridPane{
 	private Etiqueta titleLbl, equipoLbl;
 	private Boton playBtn, highScoreBtn, creditsBtn;
 	private ImageView pacImage;
-
+	
+	/**
+	* @brief Constructor del objeto MenuGrid, aquí generamos la pantalla de Menú mostrada al usuario
+	*/
 	public MenuGrid(){
 		super();
 		super.setAlignment(Pos.CENTER);
-		//super.setHgap(70);
 		super.setVgap(10);
 		super.setGridLinesVisible(false);
 		getStylesheets().add( new File("./src/unam/fi/poo/vista/style.css").toURI().toString());
@@ -48,18 +50,34 @@ public class MenuGrid extends GridPane{
 		super.add(crearCajaH(this.creditsBtn, Pos.CENTER, 10),0,4);
 	}
 
+	/**
+	* @brief Getter del atributo PlayButton
+	* @return Un objeto de tipo Botón que contiene a PlayButton
+	*/
 	public Boton getPlayButton(){
 		return this.playBtn;
 	}
-
+	
+	/**
+	* @brief Getter del atributo HighScoreButton
+	* @return Un objeto de tipo Botón que contiene a HighScoreButton
+	*/
 	public Boton getHighScoreButton(){
 		return this.highScoreBtn;
 	}
 
+	/**
+	* @brief Getter del atributo CreditsButton
+	* @return Un objeto de tipo Botón que contiene a CreditsButton
+	*/
 	public Boton getCreditsButton(){
 		return this.creditsBtn;
 	}
 
+	/**
+	* @brief Función que nos permite generar un HBox para poder manejar cajas dentro de la ventana
+	* @return Un objeto de tipo HBox
+	*/
 	private HBox crearCajaH(Node nodo, Pos posicion, double espacio){
 		HBox hbox = null;
 		if(nodo !=null && posicion !=null){

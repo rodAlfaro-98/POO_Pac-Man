@@ -24,10 +24,13 @@ public class Aplicacion extends Application{
 	private Grupo rootGame;
 	private MenuGrid menuGrid;
 	private CreditsGrid creditsGrid;
+	private HighScoreGrid highScoreGrid;
 	private ManejadorEventos me;
 	private ScoreGrid scoreGrid;
-	private HighScoreGrid highScoreGrid;
 
+	/**
+	* @brief Constructor de Aplicación, su finalidad es generar y guardar las distintas ventanas y escenarios necesarios para el funcionamiento del código
+	*/
 	public Aplicacion(){
 		this.me = ManejadorEventos.getInstance(this);
 		this.rootGame = new Grupo();
@@ -41,17 +44,19 @@ public class Aplicacion extends Application{
 		this.creditsScene = new Scene( creditsGrid, WIDTH, HEIGHT); //224 x 248
 		this.scoreScene = new Scene( scoreGrid, WIDTH, HEIGHT );
 		this.highScoreScene = new Scene( highScoreGrid, WIDTH, HEIGHT );
+
 	}
 
+	/**
+	* @brief Función que inicia toda la interfaz gráfica.
+	*/
 	public void start(Stage primaryStage){
 
 		this.window = primaryStage;
 		this.window.setResizable(false);
 		this.window.setTitle("Pac-Man");
-
-		//window.setScene( this.creditsScene );
+		
 		window.setScene( this.menuScene );
-		//window.setScene( this.gameScene );
 		window.show();
 
 	}
@@ -61,42 +66,82 @@ public class Aplicacion extends Application{
 
 	}
 
+	/**
+	* @brief Getter del atributo menuGrid
+	* @return Un objeto de tipo MenuGrid que contiene a menuGrid
+	*/
 	public MenuGrid getMenuGrid(){
 		return this.menuGrid;
 	}
 
+	/**
+	* @brief Getter del atributo creditsGrid
+	* @return Un objeto de tipo CreditsGrid que contiene a creditsGrid
+	*/
 	public CreditsGrid getCreditsGrid(){
 		return this.creditsGrid;
 	}
 
+	/**
+	* @brief Getter del atributo scoreGrid
+	* @return Un objeto de tipo ScoreGrid que contiene a scoreGrid
+	*/
 	public ScoreGrid getScoreGrid(){
 		return this.scoreGrid;
 	}
 	
+	/**
+	* @brief Getter del atributo highScoreGrid
+	* @return Un objeto de tipo HighScoreGrid que contiene a highScoreGrid
+	*/
 	public HighScoreGrid getHighScoreGrid(){
 		return this.highScoreGrid;
 	}
 
+	/**
+	* @brief Setter del atributo sc de tipo Scene
+	* @param Objeto de tipo Scene que será aquel que ocupe el valor de sc
+	*/
 	public void setScene( Scene sc ){
 		this.window.setScene( sc );
 	}
 
+	/**
+	* @brief Getter del atributo menuScene
+	* @return Un objeto de tipo MenuScene que contiene a menuScene
+	*/
 	public Scene getMenuScene(){
 		return this.menuScene;
 	}
 
+	/**
+	* @brief Getter del atributo creditsScene
+	* @return Un objeto de tipo CreditsScene que contiene a creditsScene
+	*/
 	public Scene getCreditsScene(){
 		return this.creditsScene;
 	}
 
+	/**
+	* @brief Getter del atributo gameScene
+	* @return Un objeto de tipo GameScene que contiene a gameScene
+	*/
 	public GameScene getGameScene(){
 		return this.gameScene;
 	}
 
+	/**
+	* @brief Getter del atributo scoreScene
+	* @return Un objeto de tipo ScoreScene que contiene a scoreScene
+	*/
 	public Scene getScoreScene(){
 		return this.scoreScene;
 	}
-	
+
+	/**
+	* @brief Getter del atributo highScoreScene
+	* @return Un objeto de tipo HighScoreScene que contiene a highScoreScene
+	*/
 	public Scene getHighScoreScene(){
 		return this.highScoreScene;
 	}

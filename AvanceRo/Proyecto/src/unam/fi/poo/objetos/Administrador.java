@@ -48,28 +48,6 @@ public class Administrador {
 		} 
 	}
 
-	/*public HashMap<String, Integer> getMapScores(){
-		HashMap<String, Integer> mapScores = new HashMap<String, Integer>();
-
-		try{
-			String data = "";
-			BufferedReader br;
-			File file;
-
-			file = new File(RUTA_DATOS + NOMBRE_ARCHIVO_SCORE );
-			br = new BufferedReader( new FileReader(file));
-			while((data = br.readLine()) != null ){
-				String []info = data.split(":");
-				mapScores.put(info[0], Integer.valueOf(info[1]));
-			}
-			br.close();
-		}
-		catch( IOException e ){
-			e.printStackTrace();
-		}
-		return mapScores;
-	}*/
-	
 	public ArrayList<Jugador> getScore(){
 		
 		ArrayList<Jugador> scores = new ArrayList<Jugador>();
@@ -98,7 +76,7 @@ public class Administrador {
 	
 	public void saveNode( String linea ){				
 		try {
-			BufferedWriter bw= new BufferedWriter(new FileWriter(plano,false));			
+			BufferedWriter bw= new BufferedWriter(new FileWriter(plano,true));			
 			bw.write( linea );
 			bw.newLine();
 			bw.flush();
@@ -165,6 +143,10 @@ public class Administrador {
 		return listNodos;
 	}
 
+	/**
+	* @brief Función que retorna una lista con los nodos que empleará el grafo
+	* @return Una lista de tipo String con los datos de los nodos a usar por el grafo
+	*/
 	public ArrayList<String> getNodes(){
 		ArrayList<String> listNodos = new ArrayList<String>();
 
@@ -175,6 +157,8 @@ public class Administrador {
 
 			file = new File(RUTA_DATOS + NOMBRE_ARCHIVO_PLANO );
 			br = new BufferedReader( new FileReader(file));
+			//Lo que se hace es que todas las líneas del archivo se guardan en
+			//el ArrayList, cada línea es el nombre de un nodo
 			while((data = br.readLine()) != null ){
 				listNodos.add(data);
 			}
@@ -186,6 +170,10 @@ public class Administrador {
 		return listNodos;
 	}
 
+	/**
+	* @brief Función que retorna una lista con las conexiones entre los nodos empleada por el grafo
+	* @return Una lista de tipo String con los datos de las conexiones entre los nodos a usar por el grafo
+	*/
 	public ArrayList<String> getEdges(){
 		ArrayList<String> listNodos = new ArrayList<String>();
 
