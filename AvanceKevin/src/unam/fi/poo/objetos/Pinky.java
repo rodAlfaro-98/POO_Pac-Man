@@ -11,10 +11,10 @@ import javafx.animation.TranslateTransition;
 
 import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
-import unam.fi.poo.interfaces.GhostClass;
+import unam.fi.poo.interfaces.Ghost;
 
 
-public class Pinky extends GhostClass{
+public class Pinky extends Ghost{
 
 	//Constructor
 	public Pinky( Plano g, String v0 ){
@@ -53,8 +53,8 @@ public class Pinky extends GhostClass{
 			public void handle( long now ){
 
 				if( isPacManAlive ){
-					if( tTransition.getStatus() == Status.STOPPED ){
-						
+
+					if( tTransition.getStatus() == Status.STOPPED ){						
 						setOrigen();
 						
 						if(!state.equals("FEAR") && !state.equals("HOME"));
@@ -71,6 +71,8 @@ public class Pinky extends GhostClass{
 									playOnFearPath(); break;
 								case "HOME":
 									playToHomePath(); break;
+								case "WAIT":
+									playWaitPath(3000); break;
 							}
 						}
 						setOrientacion();

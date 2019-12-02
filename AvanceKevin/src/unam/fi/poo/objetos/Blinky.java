@@ -10,9 +10,9 @@ import javafx.animation.TranslateTransition;
 
 import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
-import unam.fi.poo.interfaces.GhostClass;
+import unam.fi.poo.interfaces.Ghost;
 
-public class Blinky extends GhostClass{
+public class Blinky extends Ghost{
 
 	//Constructor
 	public Blinky( Plano g, String v0 ){
@@ -44,15 +44,16 @@ public class Blinky extends GhostClass{
 	}
 
 	private void initAnimationTimer(){
-
 		super.aTimer = new AnimationTimer(){
 			//Método manejador de todos los eventos
 			@Override
 			public void handle( long now ){
+				
+				//System.out.println("Blinky state: "+ getState() );
 
 				if( isPacManAlive ){
+
 					if( tTransition.getStatus() == Status.STOPPED ){
-						
 						setOrigen();
 						
 						if(!state.equals("FEAR") && !state.equals("HOME"));
@@ -69,6 +70,8 @@ public class Blinky extends GhostClass{
 									playOnFearPath(); break;
 								case "HOME":
 									playToHomePath(); break;
+								case "WAIT":
+									playWaitPath(1000); break;
 							}
 						}
 						setOrientacion();

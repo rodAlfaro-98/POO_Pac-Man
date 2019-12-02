@@ -128,7 +128,8 @@ public class Plano extends Graph{
 				nameNext2 = String.valueOf( v.getIntName() - 25 );
 			} break;
 		}
-
+		//if( nameNext == "300" || nameNext == "299" )
+		//	return false;
 		if( v.getNeighbors().contains( getVertex( nameNext2 ) ) )
 			return true;
 

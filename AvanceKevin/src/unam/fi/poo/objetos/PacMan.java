@@ -21,22 +21,24 @@ import unam.fi.poo.estructuras.Vertex;
 import unam.fi.poo.estructuras.Plano;
 
 import unam.fi.poo.controles.Grupo;
-import unam.fi.poo.interfaces.GhostClass;
+import unam.fi.poo.interfaces.Ghost;
 
 public class PacMan extends AnimationTimer{
 	
 	private static final int fps = 11,
 		numFrames = 4, velocidad = 90;
 	private int puntaje = 0, comida = 244, vidas = 3, nivel = 1;
+	private long time = 0;
+	private int cnt = 0;
 	private String orientacion = "RIGHT",
 					nextOrientacion = "RIGHT";
 	private Vertex startVertex, initVertex, endVertex;
 	private ImageView imageV;
 	private Sprite sprite;
 	private Plano plano;
-	private ArrayList<GhostClass> fantasmas;
+	private ArrayList<Ghost> fantasmas;
 	private ArrayList<ImageView> lives;
-	private boolean alive = false, saveScore = true;
+	private boolean isAlive = false, bandera = true, isDead = false;
 	//private Group root;
 	private Grupo root;
 	private Text score, message;
@@ -51,7 +53,7 @@ public class PacMan extends AnimationTimer{
 		this.initVertex = g.getVertex(v0);
 		this.endVertex = g.getVertex(v0);
 		this.imageV = new ImageView();
-		this.fantasmas = new ArrayList<GhostClass>();
+		this.fantasmas = new ArrayList<Ghost>();
 		this.lives = new ArrayList<ImageView>();
 
 		this.tt = new TranslateTransition();
@@ -103,32 +105,33 @@ public class PacMan extends AnimationTimer{
 	public void setRoot( Grupo root ){
 		
 		this.root = root;
-		this.root.getChildren().add( this.imageV );
-		this.root.getChildren().add( this.score );
-		this.root.getChildren().add( this.message );
 		
-		for( GhostClass g : this.fantasmas ){
+		for( Ghost g : this.fantasmas ){
 			this.root.getChildren().add( g.getSprite() );
 		}
 		
 		for( ImageView iv : this.lives ){
 			this.root.getChildren().add( iv );
 		}
+
+		this.root.getChildren().add( this.score );
+		this.root.getChildren().add( this.message );
+		this.root.getChildren().add( this.imageV );
 	}
 
 	public void pause(){
-		for( GhostClass g : fantasmas )
-			g.pause();
+		for( Ghost g : fantasmas )
+			g.pauseTransition();
 		this.tt.pause();
 	}
 
 	public void play(){
 		this.tt.play();
-		for( GhostClass g : fantasmas )
-			g.play();
+		for( Ghost g : fantasmas )
+			g.playTransition();
 	}
 
-	public void addGhostClass( GhostClass gh){
+	public void addGhost( Ghost gh){
 		this.fantasmas.add( gh );
 	}
 
@@ -159,16 +162,14 @@ public class PacMan extends AnimationTimer{
 		
 		this.puntaje = 0;
 		this.score.setText("Score ");
-		restartScene();
-		restart();
 	}
 
 	public void setIsAlive(){
-		if( this.vidas >= 0){
+		if( this.vidas >= 0 && !this.isDead && !this.isAlive ){
 			setMessage("Ready?", 75, Color.YELLOW , false );
-			this.alive = true;
-			this.saveScore = true;
-			//start();
+			this.isAlive = true;
+			this.isDead = false;
+			this.bandera = true;
 		}
 	}
 
@@ -182,10 +183,11 @@ public class PacMan extends AnimationTimer{
 	}
 
 	public void restart(){
+		this.isDead = false;
 		this.initVertex = this.startVertex;
 		this.endVertex = this.startVertex;
 
-		for(GhostClass g : fantasmas ){
+		for(Ghost g : fantasmas ){
 			g.restart();
 		}
 
@@ -202,10 +204,10 @@ public class PacMan extends AnimationTimer{
 
 	private void win(){
 
-		this.alive = false;
+		this.isAlive = false;
 
-		for( GhostClass g : fantasmas ){
-			g.stopGhost();
+		for( Ghost g : fantasmas ){
+			g.stopTransition();
 		}
 
 		++this.nivel;
@@ -216,14 +218,16 @@ public class PacMan extends AnimationTimer{
 
 	private void die( long now ){
 
-		this.alive = false;
+		this.isAlive = false;
+		this.isDead = true;
+		this.time = System.nanoTime();
 		//this.imageV.toFront();
 
-		for( GhostClass gg : fantasmas ){
-				gg.stopGhost();
+		for( Ghost gg : fantasmas ){
+				gg.stopTransition();
 				gg.setVisible(false);
 		}
-		
+		/*
 		if( --this.vidas >= 0 ){
 			this.lives.get( this.vidas ).setVisible(false);
 			this.restart();
@@ -231,6 +235,7 @@ public class PacMan extends AnimationTimer{
 		else{
 			setMessage("GAME OVER", 55, Color.RED , true );
 		}
+		*/
 		
 	}
 
@@ -250,7 +255,7 @@ public class PacMan extends AnimationTimer{
 		this.imageV.setLayoutY(
 			this.endVertex.getY() - 6 - this.imageV.getLayoutBounds().getMinY() );
 
-		this.imageV.toFront();
+		//this.imageV.toFront();
 
 		this.tt.setByX( this.imageV.getLayoutX() );
 		this.tt.setByY( this.imageV.getLayoutY() );
@@ -267,8 +272,8 @@ public class PacMan extends AnimationTimer{
 		//if( this.root.getChildren().contains( eat ) ){
 		if( eat.isVisible() ){
 			if( eat.getRadius() > 1 ){
-				for( GhostClass g : fantasmas ){
-					if( !g.goingToHome() )
+				for( Ghost g : fantasmas ){
+					if( !g.goingToHome() && !g.inHome() )
 						g.setState("FEAR");
 				}
 			}
@@ -277,7 +282,6 @@ public class PacMan extends AnimationTimer{
 			}
 			//this.root.getChildren().remove( eat );
 			eat.setVisible(false);
-			
 			--this.comida;
 		}
 		else if( this.comida == 0){
@@ -288,28 +292,24 @@ public class PacMan extends AnimationTimer{
 
 	public void handle( long now ){
 
-		if( this.alive ){
+		if( this.isAlive ){
 
 			this.imageV.setImage( 
 				this.sprite.getImage( this.orientacion, now ) );
 			
-			for( GhostClass g : fantasmas ){
+			for( Ghost g : fantasmas ){
 
-				g.setPacManState(this.alive);
+				g.setPacManState(this.isAlive);
 				g.setPacManVertex( this.initVertex );
 				g.setPacManOrientation( this.orientacion );
 
 				if( this.imageV.getBoundsInParent().intersects( g.getBounds() ) ){
 					if( g.isFear() ){
-						if( g.isScatter() )
-							g.setScatter(false);
-
+						g.setScatter(false);
 						g.setState("HOME");
 						this.updateScore( 200 );
 					}
-
 					else if( !g.goingToHome() ){
-						g.setVisible(false);
 						die( now );
 						break;
 					}
@@ -319,37 +319,53 @@ public class PacMan extends AnimationTimer{
 				moveTo();
 		}
 
+		//Sube de nivel
 		else if( this.vidas >= 0 && this.comida == 0 ){
 
 			try{ Thread.sleep(2000); }
-			catch( Exception e ){
-				System.out.println( "Error en sleep! ");
-			}
+			catch( Exception e ){ }
 
 			this.restartScene();
 			this.restart();
 		}
 
-		else if( this.vidas < 0 && this.saveScore ){
-			this.saveScore = false;
+		//Perdio todas las vidas
+		else if( this.vidas < 0 && this.bandera ){
+			this.bandera = false;
 
-			for( GhostClass g : fantasmas ){
-				g.stopGhost();
+			for( Ghost g : fantasmas ){
+				g.stopTransition();
 			}
 
 			try{ Thread.sleep(2000); }
-			catch( Exception e ){
-				System.out.println( "Error en sleep! ");
-			}
+			catch( Exception e ){ }
 
 			this.root.getManejadorEventos().getApp().getScoreGrid().setScore( this.puntaje );
 			this.restartLives();
-
+			this.restartScene();
+			this.restart();
 			this.root.getManejadorEventos().setScoreScene();
-			//this.stop();
-
 		}
 
+		//Ponemos la secuencia de explosión
+		else if( this.isDead ){
+			int num = (int)( now -this.time)/ (1000000000/this.fps);
+			
+			if( num < this.fps){
+				this.imageV.setImage(
+					this.sprite.getDieImage( num ));
+			}
+			else{
+				if( --this.vidas >= 0 ){
+					this.lives.get( this.vidas ).setVisible(false);
+					this.restart();
+				}
+				else{
+					setMessage("GAME OVER", 55, Color.RED , true );
+				}
+			}
+		}
+		//Secunecia de espera de inicio
 		else{
 			this.imageV.setImage( 
 				this.sprite.getImage( "RIGHT", now ) );

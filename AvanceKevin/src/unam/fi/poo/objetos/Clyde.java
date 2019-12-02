@@ -10,9 +10,9 @@ import javafx.animation.TranslateTransition;
 
 import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
-import unam.fi.poo.interfaces.GhostClass;
+import unam.fi.poo.interfaces.Ghost;
 
-public class Clyde extends GhostClass{
+public class Clyde extends Ghost{
 	
 	//Constructor
 	public Clyde( Plano g, String v0 ){
@@ -68,6 +68,8 @@ public class Clyde extends GhostClass{
 									playOnFearPath(); break;
 								case "HOME":
 									playToHomePath(); break;
+								case "WAIT":
+									playWaitPath(8000); break;
 							}
 						}
 						setOrientacion();

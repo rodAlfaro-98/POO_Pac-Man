@@ -32,7 +32,10 @@ public class ScoreGrid extends GridPane {
 	private Administrador admon;
 	private HashMap<String, Integer> highScores;
 
-	public ScoreGrid( ManejadorEventos me ){
+	/**
+	* @brief Constructor del objeto ScoreGrid, aquí generamos la pantalla de guardar puntajes que se le mostrará al usuario
+	*/
+	public ScoreGrid(){
 		super.setAlignment(Pos.CENTER);
 		super.setHgap(10);
 		super.setVgap(20);
@@ -48,9 +51,9 @@ public class ScoreGrid extends GridPane {
 		this.nameTxt = new CajaDeTexto();
 		this.nameTxt.setMaxWidth(120);
 		
-		this.registrarBtn = new Boton("Save", me );
+		this.registrarBtn = new Boton("Save", ManejadorEventos.getInstance() );
 		
-		this.regresarBtn = new Boton("Cancel", me );
+		this.regresarBtn = new Boton("Cancel", ManejadorEventos.getInstance() );
 
 		HBox botones = crearCajaH(this.regresarBtn, Pos.CENTER_RIGHT, 5);
 		botones.getChildren().add(registrarBtn);
@@ -68,6 +71,9 @@ public class ScoreGrid extends GridPane {
 
 	}
 
+	/**
+	* @brief Función interna de la aplicación, se activa al dar el botón de save y su finalidad es la de generar las acciones para guardar los puntajes en diferentes estructuras de datos
+	*/
 	public void saveScore(){
 
 		if( this.nameTxt.getText() != null ){
@@ -87,28 +93,51 @@ public class ScoreGrid extends GridPane {
 		this.nameTxt.clear();		
 	}
 
+	/**
+	* @brief Getter del atributo SaveButton
+	* @return Un objeto de tipo Botón que contiene a SaveButton
+	*/
 	public Boton getSaveButton(){
 		return this.registrarBtn;
 	}
 
+	/**
+	* @brief Getter del atributo CancelButton
+	* @return Un objeto de tipo Botón que contiene a CancelButton
+	*/
 	public Boton getCancelButton(){
 		return this.regresarBtn;
 	}
 
+	/**
+	* @brief Función que nos regresa el usuario ingresado por el jugador
+	* @return Un objeto de tipo String con el nombre del jugador
+	*/
 	public String getNewUserName(){
 		return this.nameTxt.getText();
 	}
 
+	/**
+	* @brief Función que nos permite mostrarle al usuario su puntuación
+	* @param Un objeto de tipo Integer que contiene la puntuación
+	*/
 	public void setScore( int score ){
 		this.score = score;
 		this.encabezado.setText("Your Score: "+this.score);
 
 	}
 
+	/**
+	* @brief Función que nos regresa el puntaje del usuario
+	* @return Un objeto de tipo Integer con el puntaje del usuario
+	*/
 	public int getScore(){
 		return this.score;
 	}
-	
+		
+	/**
+	* @brief Función que ingresa el puntaje del nuevo usuario y nos retorna el puntaje de los cinco mejores usuarios, para esto los ingresa en un HashMap
+	*/
 	public void getBestFive(){
 	
 		HashMap<Integer, String> allScores = new HashMap<Integer, String>();
@@ -130,6 +159,11 @@ public class ScoreGrid extends GridPane {
 	
 	}
 
+
+	/**
+	* @brief Función que nos permite generar un HBox para poder manejar cajas dentro de la ventana
+	* @return Un objeto de tipo HBox
+	*/
 	private HBox crearCajaH(Node nodo, Pos posicion, double espacio){
 		HBox hbox = null;
 		if(nodo !=null && posicion !=null){
@@ -141,6 +175,9 @@ public class ScoreGrid extends GridPane {
 		return hbox;
 	}
 	
+	/**
+	* @brief Función que hace que nuestro objeto ScoreGrid guarde los puntajes obtenidos por Administrador del archivo HighScore.txt
+	*/
 	public void loadScore(){
 				
 		for(Jugador x : this.admon.getScore()){
@@ -148,6 +185,9 @@ public class ScoreGrid extends GridPane {
 		}	
 	}
 	
+	/**
+	* @brief Función que envía una arrayList a Administrador para poder guardar los nuevos puntajes en HighScoretxt
+	*/
 	public void sendScore(){
 		
 		ArrayList<Jugador> loadScore = new ArrayList<Jugador>();

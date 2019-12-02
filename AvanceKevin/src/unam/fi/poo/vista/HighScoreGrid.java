@@ -29,7 +29,10 @@ public class HighScoreGrid extends GridPane{
 	private Administrador admon;
 	private HashMap< Integer, String > highScores;
 
-	public HighScoreGrid( ManejadorEventos me ){
+	/**
+	* @brief Constructor del objeto HighScoreGrid, aquí generamos la pantalla de Puntajes más altos mostrada al usuario
+	*/
+	public HighScoreGrid(){
 		super.setAlignment(Pos.CENTER);
 		super.setHgap(20);
 		super.setVgap(5);
@@ -52,7 +55,7 @@ public class HighScoreGrid extends GridPane{
 		this.jugadoresLbl.setAlignment(Pos.CENTER_RIGHT);
 		this.jugadoresLbl.setMinWidth(92);
 		
-		this.regresarBtn = new Boton("Regresar", me );
+		this.regresarBtn = new Boton("Regresar", ManejadorEventos.getInstance() );
 
 		this.highScores = new HashMap< Integer, String >();
 

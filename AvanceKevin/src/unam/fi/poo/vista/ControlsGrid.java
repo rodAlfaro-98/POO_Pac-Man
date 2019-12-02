@@ -14,32 +14,50 @@ import unam.fi.poo.controles.Etiqueta;
 import unam.fi.poo.controles.Boton;
 import unam.fi.poo.eventos.ManejadorEventos;
 
-public class CreditsGrid extends GridPane{
+public class ControlsGrid extends GridPane{
 
-	private Etiqueta creditos;
+	private Etiqueta accionLbl, teclaLbl;
 	private Boton regresarBtn;
 
 	/**
-	* @brief Constructor del objeto CreditsGrid, aquí generamos la pantalla de Créditos mostrada al usuario
+	* @brief Constructor del objeto ControlsGrid, aquí generamos la pantalla de Créditos mostrada al usuario
 	*/
-	public CreditsGrid(){
+	public ControlsGrid(){
 		super();
 		super.setAlignment(Pos.CENTER);
-		super.setVgap(20);
+		super.setVgap(10);
 
 		getStylesheets().add( new File("./src/unam/fi/poo/vista/style.css").toURI().toString());
 
-		this.creditos = new Etiqueta(
-			"\nRealizado por:"+
-			"\n\nAlfaro Dominguez Rodrigo"+
-			"\nLópez González Kevin"+
-			"\nPOO 2020-1"
+		this.accionLbl = new Etiqueta(
+			"COMMAND"+
+			"\nUP:"+
+			"\nDOWN:"+
+			"\nRIGTH:"+
+			"\nLEFT:"+
+			"\nSTART:"+
+			"\nPAUSE:"+
+			"\nQUIT:"
 			);
+		this.accionLbl.setAlignment(Pos.CENTER_RIGHT);
+
+		this.teclaLbl = new Etiqueta(
+			"KEY"+
+			"\nUP ARROW"+
+			"\nDOWN ARROW"+
+			"\nRIGTH ARROW"+
+			"\nLEFT ARROW"+
+			"\nENTER"+
+			"\nP"+
+			"\nQ"
+			);
+		this.teclaLbl.setAlignment(Pos.CENTER_RIGHT);
 		
 		this.regresarBtn = new Boton("Menu", ManejadorEventos.getInstance() );
 
-		super.add(crearCajaH( creditos, Pos.CENTER, 10), 0, 0);
-		super.add(crearCajaH( regresarBtn, Pos.CENTER, 10), 0, 1);
+		super.add(crearCajaH( this.accionLbl, Pos.CENTER, 10), 0, 0);
+		super.add( this.teclaLbl, 1,0 );
+		super.add(crearCajaH( regresarBtn, Pos.CENTER, 10), 0, 1, 2, 1);
 	}
 
 	/**

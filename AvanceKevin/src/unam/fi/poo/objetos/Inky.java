@@ -10,9 +10,9 @@ import javafx.animation.TranslateTransition;
 
 import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
-import unam.fi.poo.interfaces.GhostClass;
+import unam.fi.poo.interfaces.Ghost;
 
-public class Inky extends GhostClass{
+public class Inky extends Ghost{
 	
 	//Constructor
 	public Inky( Plano g, String v0 ){
@@ -69,6 +69,8 @@ public class Inky extends GhostClass{
 									playOnFearPath(); break;
 								case "HOME":
 									playToHomePath(); break;
+								case "WAIT":
+									playWaitPath(6000); break;
 							}
 						}
 						setOrientacion();

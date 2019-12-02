@@ -253,32 +253,13 @@ public class Graph{
 						v2str = getVertex( v2str ).getPredecesor();
 					else
 						break;
-				//System.out.println("Path" + path);
 				}
-
-				//path.push( v1.getName() );
 				path.push( v2str );
 				pila.push( v2str );
 
 				lista.add(path);
 			}
 		}
-
-		//for( int i = 0; i < lista.size(); ++i ){
-		//	pila = lista.get( i );
-
-			//System.out.println( _v1 + " to "+_v2 );
-			//System.out.println(i+" : "+pila);
-			//System.out.println("Size: "+pila.size() +" >> "+ tam);
-
-			//if( lista.get( i ).size() >= (2*tam) &&
-			//	_v1.equals( lista.get( i ).pop() ) ){
-			//	System.out.println( "Elegida "+pila);
-			//	return lista.get( i );
-			//}
-		//}
-
-		//return lista.get(0);
 		return pila;
 
 	}
