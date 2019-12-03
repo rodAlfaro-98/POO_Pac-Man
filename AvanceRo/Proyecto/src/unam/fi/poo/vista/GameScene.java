@@ -17,7 +17,12 @@ import javafx.scene.paint.Color;
 import unam.fi.poo.estructuras.Plano;
 import unam.fi.poo.estructuras.Vertex;
 import unam.fi.poo.objetos.PacMan;
-import unam.fi.poo.objetos.Ghost;
+import unam.fi.poo.objetos.Blinky;
+import unam.fi.poo.objetos.Inky;
+import unam.fi.poo.objetos.Clyde;
+import unam.fi.poo.objetos.Pinky;
+
+import unam.fi.poo.interfaces.Ghost;
 
 //import unam.fi.poo.eventos.ManejadorEventos;
 import unam.fi.poo.controles.Grupo;
@@ -29,6 +34,7 @@ public class GameScene extends Scene{
 	private int width, height;
 	private Grupo root;
 	private Plano plano;
+	private boolean pause = false;
 	public PacMan pacMan;
 	public Ghost clyde, blinky, inky, pinky;
 
@@ -50,28 +56,35 @@ public class GameScene extends Scene{
 		initGraph();
 
 		this.pacMan = new PacMan("PACMAN", this.plano, "586" );
-		this.blinky = new Ghost("BLINKY", this.plano, "274" );
-		this.clyde = new Ghost("CLYDE", this.plano, "349");
-		this.pinky = new Ghost("PINKY", this.plano, "351");
-		this.inky = new Ghost("INKY", this.plano, "353");
+		this.blinky = new Blinky(this.plano, "274" );
+		this.inky = new Inky(this.plano, "349");
+		this.pinky = new Pinky(this.plano, "351");
+		this.clyde = new Clyde(this.plano, "353");
 
 		this.pacMan.addGhost( this.blinky );
 		this.pacMan.addGhost( this.pinky );
 		this.pacMan.addGhost( this.inky );
 		this.pacMan.addGhost( this.clyde );
-
 		this.pacMan.setRoot( this.root );
-
 
 	}
 
 	public void startObjects(){
 
-		pacMan.start();
-		blinky.start();
-		pinky.start();
-		inky.start();
-		clyde.start();
+		this.pacMan.start();
+		this.blinky.startTimer();		
+		this.pinky.startTimer();
+		this.inky.startTimer();
+		this.clyde.startTimer();
+	}
+
+	public void stopObjects(){
+
+		this.pacMan.stop();
+		this.blinky.stopTimer();
+		this.pinky.stopTimer();
+		this.inky.stopTimer();
+		this.clyde.stopTimer();
 	}
 
 	private void addObjects( Node pp){
@@ -85,9 +98,15 @@ public class GameScene extends Scene{
 		this.plano.addEdge( "339", "364" );
 
 		for(Vertex v : this.plano.getMap().values()){
-			addObjects( v.getCircle() );
+			if( v.getCircle().getRadius() > 0 ){
+				addObjects( v.getCircle() );
+			}
+			else{
+				//v.getCircle().setRadius(1);
+				//addObjects( v.getCircle() );
+				v.getCircle().setVisible(false);
+			}
 		}
-
 	}
 
 	private void updateRoot(){
@@ -111,20 +130,28 @@ public class GameScene extends Scene{
                     	pacMan.setOrientacion("LEFT"); break;
 					case RIGHT:
                     	pacMan.setOrientacion("RIGHT"); break;
-                    case R:
-                    {	
-                    	if( !pacMan.isAlive() ){
-                    		pacMan.restartLives();
-							updateRoot();
-						}
-					}
-						break;
+                    case Q:
+                    {
+                    	pacMan.restart();
+                    	pacMan.restartScene();
+                    	pacMan.restartLives();
+                    	root.getManejadorEventos().setMenuScene();
+                    } break;
+                    case P:
+                    	if( !pause ){
+                    		pacMan.pause();
+                    		pause = true;
+                    	}
+                    	else{
+                    		pacMan.play();
+                    		pause = false;
+                    	}
                     case ENTER:
                     	try{
 							pacMan.setIsAlive();
 						}
 						catch( Exception ex){
-							System.out.println("Algo malo pasó");
+							System.out.println("Error!");
 						}
 						break;
 				}

@@ -48,28 +48,6 @@ public class Administrador {
 		} 
 	}
 
-	/*public HashMap<String, Integer> getMapScores(){
-		HashMap<String, Integer> mapScores = new HashMap<String, Integer>();
-
-		try{
-			String data = "";
-			BufferedReader br;
-			File file;
-
-			file = new File(RUTA_DATOS + NOMBRE_ARCHIVO_SCORE );
-			br = new BufferedReader( new FileReader(file));
-			while((data = br.readLine()) != null ){
-				String []info = data.split(":");
-				mapScores.put(info[0], Integer.valueOf(info[1]));
-			}
-			br.close();
-		}
-		catch( IOException e ){
-			e.printStackTrace();
-		}
-		return mapScores;
-	}*/
-	
 	public ArrayList<Jugador> getScore(){
 		
 		ArrayList<Jugador> scores = new ArrayList<Jugador>();
@@ -98,7 +76,7 @@ public class Administrador {
 	
 	public void saveNode( String linea ){				
 		try {
-			BufferedWriter bw= new BufferedWriter(new FileWriter(plano,false));			
+			BufferedWriter bw= new BufferedWriter(new FileWriter(plano,true));			
 			bw.write( linea );
 			bw.newLine();
 			bw.flush();

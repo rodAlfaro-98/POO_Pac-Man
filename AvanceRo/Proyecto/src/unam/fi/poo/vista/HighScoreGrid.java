@@ -4,6 +4,7 @@ package unam.fi.poo.vista;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,41 +24,49 @@ import unam.fi.poo.objetos.Jugador;
 
 public class HighScoreGrid extends GridPane{
 	
-	private Etiqueta nameLbl, encabezado;
+	private Etiqueta nameLbl, encabezado, puntajesLbl, jugadoresLbl;
 	private Boton regresarBtn;
 	private Administrador admon;
-	private HashMap<String, Integer> highScores;
-	//private ArrayList<Jugador> loadScore;
+	private HashMap< Integer, String > highScores;
 
-	public HighScoreGrid( ManejadorEventos me ){
-		this.highScores = new HashMap<String, Integer>();
+	/**
+	* @brief Constructor del objeto HighScoreGrid, aquí generamos la pantalla de Puntajes más altos mostrada al usuario
+	*/
+	public HighScoreGrid(){
 		super.setAlignment(Pos.CENTER);
-		super.setHgap(10);
-		super.setVgap(20);
+		super.setHgap(20);
+		super.setVgap(5);
 		super.setGridLinesVisible(false);
+		
 		getStylesheets().add(
 			new File("./src/unam/fi/poo/vista/style.css").toURI().toString());
 		this.admon = new Administrador();
-		loadScore();
-		//this.highScores = admon.getMapScores();
 
-		this.encabezado = new Etiqueta("High Scores ");		
-		//datos del formulario
-		this.nameLbl = new Etiqueta("The Best Five: ");
-		this.nameLbl.setAlignment(Pos.CENTER_RIGHT);
-		
-		this.regresarBtn = new Boton("Regresar", me );
+		this.encabezado = new Etiqueta("The Best Five High Scores");		
 
-		HBox botones = crearCajaH(this.regresarBtn, Pos.CENTER_RIGHT, 5);
-		//botones.getChildren().add(registrarBtn);
+		this.nameLbl = new Etiqueta("Player:  \t   Score:");
+		this.nameLbl.setAlignment(Pos.TOP_CENTER);
+
+		this.puntajesLbl = new Etiqueta("");
+		this.puntajesLbl.setAlignment(Pos.CENTER_RIGHT);
+		this.puntajesLbl.setMinWidth(92);
+
+		this.jugadoresLbl = new Etiqueta("");
+		this.jugadoresLbl.setAlignment(Pos.CENTER_RIGHT);
+		this.jugadoresLbl.setMinWidth(92);
 		
+		this.regresarBtn = new Boton("Regresar", ManejadorEventos.getInstance() );
+
+		this.highScores = new HashMap< Integer, String >();
+
 		super.add(crearCajaH(encabezado, Pos.TOP_CENTER, 10),0,0,2,1);
 		
-		super.add(crearCajaH(this.nameLbl, Pos.CENTER_RIGHT, 5),0,1);
-	
-		super.add(crearCajaH(botones, Pos.TOP_CENTER,10),0,3,3,1);
+		super.add(crearCajaH(this.nameLbl, Pos.TOP_CENTER, 5),0,1,2,1);
 		
-		showScores();
+		super.add(crearCajaH(this.jugadoresLbl, Pos.TOP_CENTER, 5),0,2);
+		super.add( this.puntajesLbl,1,2);
+
+		super.add(crearCajaH(this.regresarBtn, Pos.TOP_CENTER,10),0,3,2,1);
 	}
 	
 
@@ -78,26 +87,34 @@ public class HighScoreGrid extends GridPane{
 	
 	public void loadScore(){
 		
-		ArrayList<Jugador> loadScore = new ArrayList<Jugador>();
-		
-		loadScore = this.admon.getScore();
-		for(Jugador x : loadScore){
-			this.highScores.put(x.getName(), x.getScore());
+		for(Jugador x : this.admon.getScore() ){
+			this.highScores.put( x.getScore(), x.getName() );
 		}	
 	}
 	
 	public void showScores(){
 	
 		loadScore();
-	
+
 		String scores = "";
-	
-		for(String name : this.highScores.keySet()){
-			scores += "Player: "+name+" score: "+this.highScores.get(name)+"\n";
+		String names = "";
+		
+		ArrayList<Integer> toSort = new ArrayList<Integer>();
+		
+		for( Integer score : this.highScores.keySet() ){
+			toSort.add( score );
 		}
 		
+		Collections.sort(toSort, Comparator.reverseOrder() );
+		
+		for( int i = 0; i < 5; i++ ){
+			Integer score = toSort.get( i );
+			names += this.highScores.get( score )+"\n";
+			scores += String.valueOf( score )+"\n";
+		}
 	
-		super.add(new Etiqueta(scores), 0,2,2,1);
+		this.jugadoresLbl.setText( names );
+		this.puntajesLbl.setText( scores );
 		
 	}
 	

@@ -117,7 +117,6 @@ public class Sprite{
 		}
 		return null;
 	}
-	//Funcion para retornar los ojos
 
 	public Image getImage( String status, long now ){
 		

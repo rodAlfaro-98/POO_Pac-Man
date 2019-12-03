@@ -16,10 +16,21 @@ public class Plano extends Graph{
 	private ArrayList<String> inicio;
 	private Administrador admon;
 
+	/**
+	* @brief Constructor vacío del objeto Plano.
+	*/
 	public Plano(){
 		super();
 	}
 
+	/**
+	* @brief Constructor del objeto Plano.
+	* @param x0 de tipo double. Es la coordenada x origen;
+	* @param y0 de tipo double. Es la coordenada y origen;
+	* @param tamx de tipo entero. Es el numero de columas de la matriz.
+	* @param tamy de tipo entero. Es el numero de filas de la matriz.
+	* @param incr de tipo double. Es el incremento entre coordenadas de vértices.
+	*/
 	public Plano( double x0, double y0, int tamX, int tamY, double incr ){
 		super();
 		this.tamX = tamX;
@@ -33,36 +44,34 @@ public class Plano extends Graph{
 		this.admon = new Administrador();
 	}
 
+	/**
+	* @brief Función Getter del atributo incremento.
+	* @return El incremento de coordenadas.
+	*/
 	public double getIncrement(){
 		return this.incr;
 	}
 
+	/**
+	* @brief Función Getter del atributo tamx.
+	* @return El numero de columnas de la matriz.
+	*/
 	public int getTamX(){
 		return this.tamX;
 	}
 
+	/**
+	* @brief Función Getter del atributo tamy.
+	* @return El numero de filas de la matriz.
+	*/
 	public int getTamY(){
 		return this.tamY;
 	}
 
-	public void addAllInitNodes( String...args ){
-		for( String s: args )
-			this.inicio.add(s);
-	}
-
-	public void addSpecialNode( String nameV ){
-		this.special.add( nameV );
-	}
-
-	public void addAllSpecialNodes( String... args ){
-		for(String s: args)
-			this.special.add(s);
-	}
-
-	public Vertex getVertex(String v){
-		return super.getVertex( v );
-	}
-
+	/**
+	* @brief Función que devuelve un vértice al azar.
+	* @return Un vértice que pertenezca al grafo.
+	*/
 	public Vertex getRandomVertex(){
 		Random rndm = new Random();
 		int r = rndm.nextInt( tamX*tamY );
@@ -75,66 +84,16 @@ public class Plano extends Graph{
 		return super.getVertex( String.valueOf( r ) );
 	}
 
-	public HashMap<String, Vertex> getMap(){
-		return super.getMap();
-	}
-
-	public int size(){
-		return super.size();
-	}
-
-	private void guardarPlano(){
-		for( Vertex v : super.getMap().values() ){
-			this.admon.saveNode( v.toString() );
-		}
-	}
-
-	public void cargarPlano(){
-		//System.out.println("Cargando plano...");
-		for( String data : this.admon.getNodes() ){
-			String []info = data.split(":");
-			super.addVertex( 
-				new Vertex( info[0],
-					Double.valueOf( info[1] ),
-					Double.valueOf( info[2] ),
-					Double.valueOf( info[3] ),
-					Color.RED) );
-		}
-		for( String data : this.admon.getEdges() ){
-			String []info = data.split(":");
-			super.addEdge(info[0], info[1]);
-		}
-	}
-
-
-	public boolean existNextVertex( Vertex v, String orient ){
-		
-		String nameNext = new String();
-		String nameNext2 = new String();
-
-		switch( orient ){
-			case "UP":
-				nameNext = String.valueOf( v.getIntName() - tamX );	break;
-			case "DOWN":
-				nameNext = String.valueOf( v.getIntName() + tamX );	break;
-			case "LEFT":
-			{
-				nameNext = String.valueOf( v.getIntName() - 1 );
-				nameNext2 = String.valueOf( v.getIntName() + 25 );
-			} break;
-			case "RIGHT":
-			{
-				nameNext = String.valueOf( v.getIntName() + 1 );
-				nameNext2 = String.valueOf( v.getIntName() - 25 );
-			} break;
-		}
-
-		if( v.getNeighbors().contains( getVertex( nameNext2 ) ) )
-			return true;
-
-		return v.getNeighbors().contains( getVertex( nameNext ) );
-	}
-
+	/**
+	* @brief Función que devuelve el siguiente vértice en la direccion del personaje.
+	* @param prev de tipo Vertex. Es el vértice origen.
+	* @param num de tipo entero. Es numero de vértices que deseas adelantar.
+	* @param orientacion de tipo String. Es la orientaciñon del personaje.
+	* @param first de tipo boolean. Es una bandera para elegir el retorno de datos.
+	* @return El siguiente vértice n veces delante del origen.
+	*			En caso de no encontrar el vértice, verifica first.
+	*			Si es True devuelve el origen, Null en el caso contrario.
+	*/
 	public Vertex getNextVertex( Vertex prev, int num, String orientation, boolean first ){
 		String nameNext = new String();
 		String nameNext2 = new String();
@@ -166,14 +125,98 @@ public class Plano extends Graph{
 			return null;
 	}
 
-	public Stack<String> getPathTo( Vertex v1, Vertex v2 ){
-		return super.goToVertex( v1.getName(), v2.getName() );
+	/**
+	* @brief Se usan?
+	*/
+	public void addAllInitNodes( String...args ){
+		for( String s: args )
+			this.inicio.add(s);
+	}
+	
+	/**
+	* @brief Se usa??
+	*/
+	public void addSpecialNode( String nameV ){
+		this.special.add( nameV );
 	}
 
-	public Stack<String> getDoublePathTo( Vertex v1, Vertex v2, int tam ){
-		return super.goToDoubleVertex( v1.getName(), v2.getName(), tam );
+	/**
+	* @brief Se usa??
+	*/
+	public void addAllSpecialNodes( String... args ){
+		for(String s: args)
+			this.special.add(s);
 	}
 
+
+	/**
+	* @brief Función que verifica la existencia del siguiente vértice en la dirección del personaje.
+	* @param v de tipo Vertex. Es el vértice origen.
+	* @param orient de tipo String. Es la orientación del personaje.
+	* @return True si existe. False en caso contrario.
+	*/
+	public boolean existNextVertex( Vertex v, String orient ){
+		
+		String nameNext = new String();
+		String nameNext2 = new String();
+
+		switch( orient ){
+			case "UP":
+				nameNext = String.valueOf( v.getIntName() - tamX );	break;
+			case "DOWN":
+				nameNext = String.valueOf( v.getIntName() + tamX );	break;
+			case "LEFT":
+			{
+				nameNext = String.valueOf( v.getIntName() - 1 );
+				nameNext2 = String.valueOf( v.getIntName() + 25 );
+			} break;
+			case "RIGHT":
+			{
+				nameNext = String.valueOf( v.getIntName() + 1 );
+				nameNext2 = String.valueOf( v.getIntName() - 25 );
+			} break;
+		}
+		//if( nameNext == "300" || nameNext == "299" )
+		//	return false;
+		if( v.getNeighbors().contains( getVertex( nameNext2 ) ) )
+			return true;
+
+		return v.getNeighbors().contains( getVertex( nameNext ) );
+	}
+
+
+	/**
+	* @brief Función que guarda en un archivo txt el plano creado.
+	*/
+	private void guardarPlano(){
+		for( Vertex v : super.getMap().values() ){
+			this.admon.saveNode( v.toString() );
+		}
+	}
+
+	/**
+	* @brief FUnción que obtiene el plano de un archivo txt previamente creado.
+	*/
+	public void cargarPlano(){
+		//System.out.println("Cargando plano...");
+		for( String data : this.admon.getNodes() ){
+			String []info = data.split(":");
+			super.addVertex( 
+				new Vertex( info[0],
+					Double.valueOf( info[1] ),
+					Double.valueOf( info[2] ),
+					Double.valueOf( info[3] ),
+					Color.RED) );
+		}
+		for( String data : this.admon.getEdges() ){
+			String []info = data.split(":");
+			super.addEdge(info[0], info[1]);
+		}
+	}
+
+	/**
+	* @brief Función que crea un Grafo a partir de una matriz. Sólo se ejcuta una vez.
+	*/
 	public void createGraph(){
 
 		int i, j, n = 1;
