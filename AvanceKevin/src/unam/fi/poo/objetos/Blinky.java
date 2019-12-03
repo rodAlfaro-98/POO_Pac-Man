@@ -32,7 +32,7 @@ public class Blinky extends Ghost{
 		super.tTransition.setDuration( new Duration( VELOCIDAD ) );
 		super.tTransition.setNode( super.imageV );
 		super.tTransition.setCycleCount(1);
-		super.state = super.nombre;
+		super.state = "WAIT";
 		
 		super.movimientos = new Stack<String>();
 		super.timer = System.currentTimeMillis();
@@ -45,12 +45,11 @@ public class Blinky extends Ghost{
 
 	private void initAnimationTimer(){
 		super.aTimer = new AnimationTimer(){
+			
 			//Método manejador de todos los eventos
 			@Override
 			public void handle( long now ){
 				
-				//System.out.println("Blinky state: "+ getState() );
-
 				if( isPacManAlive ){
 
 					if( tTransition.getStatus() == Status.STOPPED ){

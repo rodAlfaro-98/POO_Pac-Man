@@ -36,8 +36,7 @@ public class ControlsGrid extends GridPane{
 			"\nRIGTH:"+
 			"\nLEFT:"+
 			"\nSTART:"+
-			"\nPAUSE:"+
-			"\nQUIT:"
+			"\nPAUSE:"
 			);
 		this.accionLbl.setAlignment(Pos.CENTER_RIGHT);
 
@@ -48,8 +47,7 @@ public class ControlsGrid extends GridPane{
 			"\nRIGTH ARROW"+
 			"\nLEFT ARROW"+
 			"\nENTER"+
-			"\nP"+
-			"\nQ"
+			"\nP"
 			);
 		this.teclaLbl.setAlignment(Pos.CENTER_RIGHT);
 		

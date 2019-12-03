@@ -9,7 +9,7 @@ public class Sprite{
 
 	private final String RUTA_IMAGEN = "./imagenes/Clasic/";
 	private String name;
-	private int numFramesO, numFramesD;
+	private int numFramesA, numFramesD;
 	private long lastFrame;
 	private int fps;
 	private ArrayList<Image> framesUP;
@@ -20,11 +20,21 @@ public class Sprite{
 	private ArrayList<Image> framesDIE;
 	private ArrayList<Image> framesEYES;
 
+	/**
+	* @brief Constructor vacío de la clase.
+	*/
 	public Sprite(){}
 	
-	public Sprite( String _name, int _numFramesO, int _numFramesD, int _fps){
+	/**
+	* @brief Constructor de la clase.
+	* @param _name de tipo String. Es el nombre con el que buscará las imagenes.
+	* @param _numFramesO de tipo entero. Es el numero de imagenes que ocupará para la animación cuando este vivo.
+	* @param _numFramesO de tipo entero. Es el numero de imagenes que ocupará para la animación cuando este muerto.
+	* @param _fps de tipo entero. Es el numero de imagenes por segundo.
+	*/
+	public Sprite( String _name, int _numFramesA, int _numFramesD, int _fps){
 		this.name = _name;
-		this.numFramesO = _numFramesO;
+		this.numFramesA = _numFramesA;
 		this.numFramesD = _numFramesD;
 
 		this.framesUP = new ArrayList<Image>();
@@ -39,16 +49,21 @@ public class Sprite{
 		this.fps = _fps;
 
 
-		cargarImagenes("_UP", numFramesO);
-		cargarImagenes("_DOWN", numFramesO);
-		cargarImagenes("_LEFT", numFramesO);
-		cargarImagenes("_RIGHT", numFramesO);
+		cargarImagenes("_UP", numFramesA);
+		cargarImagenes("_DOWN", numFramesA);
+		cargarImagenes("_LEFT", numFramesA);
+		cargarImagenes("_RIGHT", numFramesA);
 		cargarGhostFear( numFramesD );
 		cargarGhostEyes( numFramesD );
 		cargarImagenes("_DIE", numFramesD );
 
 	}
 
+	/**
+	* @brief Función que carga lsa imagenes al programa.
+	* @param orientación de tipo String. Es la orientación de la imagen.
+	* @param numF de tipo entero. Es el numero de imágenes que buscará.
+	*/
 	private void cargarImagenes( String orientacion, int numF ){
 		File f;
 		for( int i = 0; i < numF; ++i ){
@@ -74,6 +89,10 @@ public class Sprite{
 		}
 	}
 
+	/**
+	* @brief Función que carga las imágenes especiales del Fantasma. Estado FEAR.
+	* @param numF de tipo entero. Es el número de imágenes.
+	*/
 	private void cargarGhostFear( int numF ){
 		File f;
 		for( int i = 0; i < numF; ++i ){
@@ -83,6 +102,10 @@ public class Sprite{
 		}
 	}
 
+	/**
+	* @brief Función que carga las imágenes especiales del Fantasma. Estado HOME.
+	* @param numF de tipo entero. Es el número de imágenes.
+	*/
 	private void cargarGhostEyes( int numF ){
 		File f;
 		for( int i = 0; i < numF; ++i ){
@@ -92,18 +115,37 @@ public class Sprite{
 		}
 	}
 
+	/**
+	* @brief Función Getter que devuelve una imagen correspondiente a la animación de la muerte del personaje.
+	* @param index de tipo entero. Es el índice de la imagen.
+	* @return La imagen especificada por el índice.
+	*/
 	public Image getDieImage( int index ){
 		return this.framesDIE.get( index );
 	}
 
+	/**
+	* @brief Función Getter que devuelve una imagen para representar las vidas del PacMan.
+	* @return Una imagen del PacMan.
+	*/
 	public Image getLiveImage(){
-		return framesLEFT.get(1);
+		return framesRIGTH.get(1);
 	}
 
+	/**
+	* @brief Función que devuelve 2 imágenes especiales del Fantasma.
+	* @param now de tipo entero. Es el tiempo en segundos, se usa como referencia para iterar las imagenes.
+	* @return Una imagen del fantasma cuando tiene miedo. 
+	**/
 	public Image getImageFearBlue( int now ){
-		return framesFEAR.get( ( now % numFramesO ) * 2 );
+		return framesFEAR.get( ( now % numFramesA ) * 2 );
 	}
 
+	/**
+	* @brief Función que devuelve una imagen de los ojos del fantasma.
+	* @param orientacion de tipo String. Es la orientación del fantasma.
+	* @return Una imagen de los ojos del fantasma en la dirección especificada.
+	*/
 	public Image getImageEyes( String orientacion ){
 		switch( orientacion ){
 			case "UP":
@@ -118,19 +160,25 @@ public class Sprite{
 		return null;
 	}
 
+	/**
+	* @brief Función que devuelve una imagen del personaje según su orientación y/o estado.
+	* @param status de tipo String. Es el estado/orientación del personaje.
+	* @param now de tipo long. Es el tiempo en nano segundos, utilizado como referencia para iterar las imágenes.
+	* @return La imagen del personaje segun su estado.
+	*/
 	public Image getImage( String status, long now ){
 		
 		int frameJump = (int) Math.floor(( now - this.lastFrame) / (1000000000 / fps));
 
 		switch( status ){
 			case "RIGHT":
-				return framesRIGTH.get(frameJump % numFramesO);
+				return framesRIGTH.get(frameJump % numFramesA);
 			case "LEFT":
-				return framesLEFT.get(frameJump % numFramesO);
+				return framesLEFT.get(frameJump % numFramesA);
 			case "UP":
-				return framesUP.get(frameJump % numFramesO);
+				return framesUP.get(frameJump % numFramesA);
 			case "DOWN":
-				return framesDOWN.get(frameJump % numFramesO);
+				return framesDOWN.get(frameJump % numFramesA);
 			case "FEAR":
 				return framesFEAR.get(frameJump % numFramesD );
 			case "DIE":

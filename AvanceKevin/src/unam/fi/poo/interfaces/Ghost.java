@@ -19,11 +19,11 @@ import javafx.animation.Animation.Status;
 
 public abstract class Ghost{
 
-	public static final int FPS = 4; 		// Cuadros por segundo
-	public static final int FRAMES = 2;	// 2 cuadros de animacion
-	public static final int VELOCIDAD = 110; // 110 milisegundos por vertice
-	public static final int VELOCIDAD_HOME = 60; // 110 milisegundos por vertice
-	public static final int TIME_OF_FEAR = 9;  // 9 segundos de miedo
+	public static final int FPS = 4; 				// Cuadros por segundo
+	public static final int FRAMES = 2;				// 2 cuadros de animacion
+	public static final int VELOCIDAD = 110; 		// 110 milisegundos por vertice
+	public static final int VELOCIDAD_HOME = 60;	// 60 milisegundos por vertice
+	public static final int TIME_OF_FEAR = 9;		// 9 segundos de miedo
 
 	public String nombre;
 	public String orientacion = "RIGHT";
@@ -49,79 +49,110 @@ public abstract class Ghost{
 	public boolean scatter;
 	public Stack<String> scatterPath;
 
+	/**
+	* @brief Funciones abstractas.
+	*/
 	public abstract void scatter();
 	public abstract void playOnChasePath();
 
+	/**
+	* @brief Función que detiene el hilo principal de animación.
+	*/
 	public void stopTimer(){
 		this.aTimer.stop();
 	}
 
+	/**
+	* @brief Función que activa el hilo principal de animación.
+	*/
 	public void startTimer(){
 		this.aTimer.start();
 	}
 
+	/**
+	* @brief Función que resetea al fantasma a su posición inicial.
+	*/
 	public void restart(){
-
+		
 		this.scatter = false;
-		this.state = this.nombre;
-		this.orientacion = "RIGHT";	
+		this.firstTime = true;
+		this.state = "WAIT";
+		this.orientacion = "RIGHT";
 		this.initVertex = this.startVertex;
 		this.endVertex = this.startVertex;
 		this.imageV.relocate(
 			initVertex.getX()-6, initVertex.getY()-6 );
 		this.imageV.setVisible(true);
 		this.tTransition.setDuration( Duration.millis( VELOCIDAD ) );
-		
 	}
 
+	/**
+	* @brief Función que detiene el desplazamiento del fantasma.
+	*/
 	public void stopTransition(){
+		this.tTransition.stop();
 		this.isPacManAlive = false;
-		this.tTransition.setOnFinished( new EventHandler<ActionEvent>(){
-			
-			public void handle( ActionEvent e ){
-				tTransition.stop();
-			}
-		});
 		this.state = this.nombre;
 	}
 
+	/**
+	* @brief Función que pausa el desplazamiento del fantasma.
+	*/
 	public void pauseTransition(){
 		this.tTransition.pause();
 	}
 
+	/**
+	* @brief Función que activa el desplazamiento del fantasma.
+	*/
 	public void playTransition(){
 		this.tTransition.play();
 	}
 
-	//Métodos Obtención datos Pac-Man
+	/**
+	* @brief Función para recoleccion de datos.
+	* @param vp de tipo Vertex. Es el vértice donde se encuentra PacMan.
+	*/
 	public void setPacManVertex( Vertex vp ){
 		this.pacVertex = vp;
 	}
 
+	/**
+	* @brief Función para recoleccion de datos.
+	* @param str de tipo String. Es la orientacion del PacMan.
+	*/
 	public void setPacManOrientation( String str ){
 		this.pacOrientacion = str;
 	}
 
+	/**
+	* @brief Función para recoleccion de datos.
+	* @param b de tipo boolean. Es el estado del PacMan. True = Vivo.
+	*/
 	public void setPacManState( boolean b ){
 		this.isPacManAlive = b;
 	}
 
+	/**
+	* @brief Función que verifica si es tiempo de entrar a modo Scatter.
+	*/
 	public void seeIfScatter(){
 		long now = System.currentTimeMillis();
 				
 		if(this.scatter == false && (now - this.timer) >= 20000){
 			this.scatter = true;
-			//this.state = "SCATTER";
 			this.timer = System.currentTimeMillis();
 		}
 		if(this.scatter == true && (now - this.timer) >= 7000){
 			this.scatter = false;
-			//this.state = this.nombre;
 			this.timer = System.currentTimeMillis();
 		}
 		
 	}
 	
+	/**
+	* @brief Función que reproduce un movimiento aleatorio cuanto el estado del fantasma es FEAR.
+	*/
 	public void playOnFearPath(){
 
 		if( this.firstTime ){
@@ -143,6 +174,9 @@ public abstract class Ghost{
 		moveGhost();
 	}
 	
+	/**
+	* @brief Función que lleva al fantasma de regreso a la casa. Estado HOME.
+	*/
 	public void playToHomePath(){
 
 		if( this.firstTime ){
@@ -175,15 +209,20 @@ public abstract class Ghost{
 		moveGhost();
 	}
 
+	/**
+	* @brief Función que espera cierto tiempo antes de que el fantasma salga de la casa. Estado WAIT.
+	*/
 	public void playWaitPath( long timeTotal ){
 
-		if( this.firstTime )
+		if( this.firstTime ){
 			this.timer = System.currentTimeMillis();
+			this.firstTime = false;
+		}
 
 		long time = System.currentTimeMillis() - this.timer;
 		
 		if( time < timeTotal ){
-			if( (time/500) % 2 == 0 )
+			if( (time/300) % 2 == 0 )
 				this.endVertex = this.plano.getNextVertex( this.startVertex, 1, "DOWN", true );
 			else{
 				this.endVertex = this.plano.getNextVertex( this.startVertex, 1, "UP", true );
@@ -196,29 +235,35 @@ public abstract class Ghost{
 		}
 	}
 	
-	//Método actualización del Sprite
+	/**
+	* @brief Función que actualiza la posición del fantasma.
+	*/
 	public void moveGhost(){
+		try{
+			this.imageV.setLayoutX( this.endVertex.getX() - 6 - 
+				this.imageV.getLayoutBounds().getMinX() );
 
-		this.imageV.setLayoutX( this.endVertex.getX() - 6 - 
-			this.imageV.getLayoutBounds().getMinX() );
+			this.imageV.setLayoutY(	this.endVertex.getY() - 6 - 
+				this.imageV.getLayoutBounds().getMinY() );
 
-		this.imageV.setLayoutY(	this.endVertex.getY() - 6 - 
-			this.imageV.getLayoutBounds().getMinY() );
+			this.tTransition.setByX( this.imageV.getLayoutX() );
+			this.tTransition.setByY( this.imageV.getLayoutY() );
 
-		this.tTransition.setByX( this.imageV.getLayoutX() );
-		this.tTransition.setByY( this.imageV.getLayoutY() );
+			this.tTransition.setToX( this.imageV.getTranslateX() );
+			this.tTransition.setToY( this.imageV.getTranslateY() );
 
-		this.tTransition.setToX( this.imageV.getTranslateX() );
-		this.tTransition.setToY( this.imageV.getTranslateY() );
+			this.destinoX = this.imageV.getBoundsInParent().getMinX();
+			this.destinoY = this.imageV.getBoundsInParent().getMinY();
+				
+			this.initVertex = this.endVertex;
 
-		this.destinoX = this.imageV.getBoundsInParent().getMinX();
-		this.destinoY = this.imageV.getBoundsInParent().getMinY();
-			
-		this.initVertex = this.endVertex;
-
-		this.tTransition.play();
+			this.tTransition.play();
+		} catch( NullPointerException ne ){ }
 	}
 	
+	/**
+	* @brief Función que establece la imagen del fantsma de acuerdo a su estado.
+	*/
 	public void setImageOrientation( long now ){
 		
 		if( this.state == "FEAR" ){
@@ -241,10 +286,12 @@ public abstract class Ghost{
 		else{
 			this.imageV.setImage( this.sprite.getImage( this.orientacion, now ) );
 		}
-
-		this.imageV.toFront();
+		//this.imageV.toFront();
 	}
 	
+	/**
+	* @brief Función que establece la orientacion del fantasma.
+	*/
 	public void setOrientacion(){
 		
 		if( origenY == destinoY ){
@@ -263,45 +310,85 @@ public abstract class Ghost{
 		
 	}
 	
+	/**
+	* @brief Función que establece la posición del fantasma antes de ser desplazado.
+	*/
 	public void setOrigen(){
 		this.origenX = this.imageV.getBoundsInParent().getMinX();
 		this.origenY = this.imageV.getBoundsInParent().getMinY();
 	}
 	
+	/**
+	* @brief Función que compara el estado del fantasma.
+	* @return True si el estado es FEAR.
+	*/
 	public boolean isFear(){
 		return this.state == "FEAR" ;
 	}
 
+	/**
+	* @brief Función que compara el estado del fantasma.
+	* @return True si el estado es HOME.
+	*/
 	public boolean goingToHome(){
 		return this.state == "HOME" ;
 	}
 
+	/**
+	* @brief Función que compara el estado del fantasma.
+	* @return True si el estado es WAIT.
+	*/
 	public boolean inHome(){
 		return this.state == "WAIT";
 	}
 
+	/**
+	* @brief Función que compara el estado del fantasma.
+	* @return True si esta en modo SCATTER.
+	*/
 	public boolean isScatter(){
 		return this.scatter;
 	}
 
+	/**
+	* @brief Función Setter del modo Scatter.
+	* @param sc de tipo boolean. 
+	* @return True si el estado es FEAR.
+	*/
 	public void setScatter( boolean sc ){
 		this.scatter = sc;
 	}
 
+	/**
+	* @brief Función Setter de visibilidad de la imagen.
+	* @param vs de tipo boolean. True = Visible.
+	*/
 	public void setVisible( boolean vs ){
 		this.imageV.setVisible( vs );
 	}
 
+	/**
+	* @brief Función Setter del estado.
+	* @param st de tipo String. 
+	*/
 	public void setState( String st ){
 		this.state = st;
 		this.lastTime = System.nanoTime();
 		this.firstTime = true;
 	}
 	
+	/**
+	* @brief Función Getter de los limites de la imagen.
+	* @return Los límites de la imagen.
+	*/
 	public Bounds getBounds(){
 		return this.imageV.getBoundsInParent();
 	}
 
+	/**
+	* @brief Función Getter de la imagen.
+	* @return La imagen a dibujar.
+	*/
 	public ImageView getSprite(){
 		return this.imageV;
 	}

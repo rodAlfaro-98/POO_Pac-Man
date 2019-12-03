@@ -34,7 +34,7 @@ public class Pinky extends Ghost{
 		super.tTransition.setDuration( new Duration( VELOCIDAD ) );
 		super.tTransition.setNode( super.imageV );
 		super.tTransition.setCycleCount(1);
-		super.state = super.nombre;
+		super.state = "WAIT";
 		
 		super.movimientos = new Stack<String>();
 		super.timer = System.currentTimeMillis();

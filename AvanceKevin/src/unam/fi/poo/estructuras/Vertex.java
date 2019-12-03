@@ -25,15 +25,24 @@ public class Vertex{
 	private int discovery_time;
 	private int finish_time;
 
+	/**>!Coordenadas x, y del círculo (comida).*/
 	private double x, y, r;
 	private Circle c;
 	private Text nombre;
 	private ArrayList<Line> edges;
 
-	public Vertex(){
-		
-	}
+	/**
+	* @brief Constructor vacío del objeto Vertex.
+	*/
+	public Vertex(){ }
 
+	/**
+	* @brief Constructor del objeto Vertex.
+	* @param _name de tipo String. Es el nombre del vértice.
+	* @param x de tipo double. Es la coordenada de posición en x.
+	* @param y de tipo double. Es la coordenada de posición en y.
+	* @param r de tipo double. Es el radio del círculo.
+	*/
 	public Vertex(String _name, double x, double y, double r){
 		this.name = _name;
 		this.x = x;
@@ -46,6 +55,14 @@ public class Vertex{
 
 	}
 
+	/**
+	* @brief Constructor del objeto Vertex.
+	* @param _name de tipo String. Es el nombre del vértice.
+	* @param x de tipo double. Es la coordenada de posición en x.
+	* @param y de tipo double. Es la coordenada de posición en y.
+	* @param r de tipo double. Es el radio del círculo.
+	* @param c de tipo Color. Es el color del círculo.
+	*/
 	public Vertex(String _name, double x, double y, double r, Color c){
 		this.name = _name;
 		this.x = x;
@@ -58,6 +75,9 @@ public class Vertex{
 
 	}
 
+	/**
+	* @brief Setters y Getters de todos los atributos.
+	*/
 	public Text getText(){
 		return this.nombre;
 	}
@@ -70,26 +90,9 @@ public class Vertex{
 		this.edges.add( new Line(x,y,v2.getX(), v2.getY() ) );
 	}
 
-	public void updateColor( String c ){
-		switch( c ){
-			case "RED":
-				this.c.setFill( Color.RED ); break;
-			case "GREEN":
-				this.c.setFill( Color.GREEN ); break;
-			case "WHITE":
-				this.c.setFill( Color.WHITE ); break;
-			case "YELLOW":
-				this.c.setFill( Color.YELLOW ); break;
-		}
-	}
-
 	public Circle getCircle(){
 		return this.c;
 	}
-
-	//public ImageView getImage(){
-	//	return this.imageV;
-	//}
 
 	public void setX(int x){ this.x = x; }
 
@@ -159,38 +162,8 @@ public class Vertex{
 		this.neighbors.add(v);
 	}
 
-	public void printNeighbors(){
-		System.out.print("\tN-> ");
-		for(Vertex v : this.neighbors){
-			System.out.print(v.getName()+", ");
-		}
-		System.out.println();
-	}
-	/*
-	public void print(){
-		String color = "";
-		String s = "  ";
-		switch(this.color){
-			case BLACK: color = "BLACK"; break;
-			case GRAY: color = "GRAY"; break;
-			case WHITE: color = "WHITE"; break;
-		}
-		//System.out.print(this.name+" -> "+this.predecesor+s+
-		//	this.distance+s+this.discovery_time+"/"+this.finish_time+s+"\t"+
-		//	color+s+this.predecesor);
-		System.out.print(this.name+" ->"+this.neighbors.size());
-
-	}
-	*/
-
 	public void print(){
 		System.out.println( this.name + "[ " + this.x + " , " + this.y + " ]" + this.distance );
-	}
-
-	public String toString(){
-		String s = ":";
-		String data = this.name +s+ this.x +s+ this.y +s+ this.r;
-		return data;
 	}
 
 }

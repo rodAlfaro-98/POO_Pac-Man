@@ -6,10 +6,11 @@ import unam.fi.poo.eventos.ManejadorEventos;
 
 public class Grupo extends Group{
 
+	/**!> Manejador de eventos */
 	private ManejadorEventos me;
 
 	/**
-	* @brief Constructor del objeto Grupo
+	* @brief Constructor del objeto Grupo.
 	*/
 	public Grupo(){
 		super();

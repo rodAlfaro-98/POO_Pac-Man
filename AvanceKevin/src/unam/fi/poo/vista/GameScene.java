@@ -102,17 +102,8 @@ public class GameScene extends Scene{
 				addObjects( v.getCircle() );
 			}
 			else{
-				//v.getCircle().setRadius(1);
-				//addObjects( v.getCircle() );
 				v.getCircle().setVisible(false);
 			}
-		}
-	}
-
-	private void updateRoot(){
-		for(Vertex v : this.plano.getMap().values()){
-			if( !this.root.getChildren().contains( v.getCircle() ) )
-				addObjects( v.getCircle() );
 		}
 	}
 
@@ -130,14 +121,8 @@ public class GameScene extends Scene{
                     	pacMan.setOrientacion("LEFT"); break;
 					case RIGHT:
                     	pacMan.setOrientacion("RIGHT"); break;
-                    case Q:
-                    {
-                    	pacMan.restart();
-                    	pacMan.restartScene();
-                    	pacMan.restartLives();
-                    	root.getManejadorEventos().setMenuScene();
-                    } break;
                     case P:
+                    {
                     	if( !pause ){
                     		pacMan.pause();
                     		pause = true;
@@ -146,14 +131,9 @@ public class GameScene extends Scene{
                     		pacMan.play();
                     		pause = false;
                     	}
+                    } break;
                     case ENTER:
-                    	try{
-							pacMan.setIsAlive();
-						}
-						catch( Exception ex){
-							System.out.println("Error!");
-						}
-						break;
+						pacMan.setIsAlive(); break;
 				}
 			} 
 		});

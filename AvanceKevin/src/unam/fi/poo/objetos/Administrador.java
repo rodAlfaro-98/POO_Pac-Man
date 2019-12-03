@@ -24,6 +24,9 @@ public class Administrador {
 	//private final static Sring SEPARADOR_INFORMACION=":";
 	File nodos, nodosInfo, plano, edges, hScore;
 	
+	/**
+	* @brief Constructor del objeto administrador.
+	*/
 	public Administrador() {
 		this.nodos = new File(RUTA_DATOS + NOMBRE_ARCHIVO_NODOS);
 		this.plano = new File(RUTA_DATOS + NOMBRE_ARCHIVO_PLANO);
@@ -33,6 +36,10 @@ public class Administrador {
 		//setNodos(getNodos());
 	}
 
+	/**
+	* @brief Función que guarda los puntajes en un archivo de texto.
+	* @param scores de tipo ArrayList<Jugador>. Es la lista a guardar.
+	*/
 	public void saveScore( ArrayList<Jugador> scores ){
 		try {
 			BufferedWriter bw= new BufferedWriter(new FileWriter( this.hScore ,false));
@@ -48,6 +55,10 @@ public class Administrador {
 		} 
 	}
 
+	/**
+	* @brief Función que obtiene la lista de puntajes de un archivo.
+	* @return Lista de puntajes.
+	*/
 	public ArrayList<Jugador> getScore(){
 		
 		ArrayList<Jugador> scores = new ArrayList<Jugador>();
@@ -74,6 +85,10 @@ public class Administrador {
 		return scores;
 	}
 	
+	/**
+	* @brief Función que guarda un nodo en un archivo.
+	* @param linea de tipo String. Es la informacion del nodo.
+	*/
 	public void saveNode( String linea ){				
 		try {
 			BufferedWriter bw= new BufferedWriter(new FileWriter(plano,true));			
@@ -86,6 +101,10 @@ public class Administrador {
 		} 
 	}
 
+	/**
+	* @brief Función que guarda un arista en un archivo.
+	* @param linea de tipo String. Es la informacion del arista.
+	*/
 	public void saveEdge( String linea ){				
 		try {
 			BufferedWriter bw= new BufferedWriter(new FileWriter(edges,true));			
@@ -98,6 +117,10 @@ public class Administrador {
 		} 
 	}
 
+	/**
+	* @brief Función que guarda una lista de nodos en un archivo de texto.
+	* @param nodeList de tipo ArrayList<String>. Es la lista de nodos.
+	*/
 	public void setNodos(ArrayList<String> nodeList ){
 		try {
 			BufferedWriter bw= new BufferedWriter(new FileWriter(nodosInfo,true));			
@@ -112,6 +135,10 @@ public class Administrador {
 		} 
 	}
 
+	/**
+	* @brief Función que obtiene la lista de nodos de un archivo de texto.
+	* @return La lista de nodos.
+	*/
 	public ArrayList<String> getNodosList(){
 		ArrayList<String> listNodos = new ArrayList<String>();
 		ArrayList<Integer> listNodosI = new ArrayList<Integer>();

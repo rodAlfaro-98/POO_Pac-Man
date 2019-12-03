@@ -43,8 +43,13 @@ public class PacMan extends AnimationTimer{
 	private Grupo root;
 	private Text score, message;
 	private TranslateTransition tt;
-	//private ManejadorEventos me;
 
+	/**
+	* @brief Constructor de la clase PacMan.
+	* @param name de tipo String. Es el nombre que se usará para identificar las imágenes del sprite.
+	* @param g de tipo Plano.
+	* @param v0 de tipo Vertex. Es el vértice origen.
+	*/
 	public PacMan( String name, Plano g, String v0 ){
 			
 		this.sprite = new Sprite( name, numFrames, 11, fps );
@@ -70,6 +75,9 @@ public class PacMan extends AnimationTimer{
 
 	}
 
+	/**
+	* @brief Función que agrega componentes gŕaficos extra a la ventana.
+	*/
 	private void setComplemets(){
 		double x = 207, y = 252;
 
@@ -89,10 +97,21 @@ public class PacMan extends AnimationTimer{
 		}
 	}
 
+	/**
+	* @brief Función Setter que estable la orientación del PacMan.
+	* @param orient de tipo String. Es la nueva orientación.
+	*/
 	public void setOrientacion( String orient ){
 		this.nextOrientacion = orient;
 	}
 
+	/**
+	* @brief Función que muestra un mensaje en la pantalla.
+	* @param msm de tipo String. Es el mensaje a mostrar.
+	* @param x de tipo double. Es la coordenada de posición en x.
+	* @param c de tipo Color. Es el color del texto.
+	* @param v de tipo boolean. Indica si el texto es visible o no.
+	*/
 	private void setMessage( String msm, double x, Color c, boolean v ){
 		this.message.setText( msm );
 		this.message.setFont( Font.font("Purisa", FontWeight.BLACK, 20) );
@@ -102,6 +121,10 @@ public class PacMan extends AnimationTimer{
 		this.message.toFront();
 	}
 
+	/**
+	* @brief Función Setter que establece la raiz donde estarán los objetos.
+	* @param root de tipo Grupo.
+	*/
 	public void setRoot( Grupo root ){
 		
 		this.root = root;
@@ -119,41 +142,98 @@ public class PacMan extends AnimationTimer{
 		this.root.getChildren().add( this.imageV );
 	}
 
+	/**
+	* @brief Función de activación para iniciar el juego.
+	*/
+	public void setIsAlive(){
+		if( this.vidas >= 0 && !this.isDead && !this.isAlive ){
+			setMessage("Ready?", 75, Color.YELLOW , false );
+			this.isAlive = true;
+			this.isDead = false;
+			this.bandera = true;
+		}
+	}
+
+	/**
+	* @brief Función que pone en pausa el movimiento de todos los personajes.
+	*/
 	public void pause(){
 		for( Ghost g : fantasmas )
 			g.pauseTransition();
 		this.tt.pause();
 	}
 
+	/**
+	* @brief Función que activa el movimiento de todos los personajes.
+	*/
 	public void play(){
 		this.tt.play();
 		for( Ghost g : fantasmas )
 			g.playTransition();
 	}
 
+	/**
+	* @brief Función agrega un nuevo fantasma.
+	* @param gh de tipo Ghost.
+	*/
 	public void addGhost( Ghost gh){
 		this.fantasmas.add( gh );
 	}
 
-	public ImageView getSprite(){
-		return this.imageV;
+	/**
+	* @brief Fución que incrementa el puntaje.
+	* @param s de tipo entero. Son los puntos a sumar.
+	*/
+	private void updateScore( int s ){
+		this.puntaje += s ;
+		this.score.setText("Score "+ this.puntaje);
 	}
 
-	public Text getScore(){
-		return this.score;
+	/**
+	* @brief Función que detiene a los fantasmas e indica que se subió de nivel.
+	*/
+	private void win(){
+
+		this.isAlive = false;
+
+		for( Ghost g : fantasmas )
+			g.stopTransition();
+
+		++this.nivel;
+		setMessage("LEVEL "+this.nivel , 60, Color.YELLOW , true );
 	}
 
+	/**
+	* @brief Función que detiene a los fantasmas e indica que el PacMan murió.
+	*/
+	private void die(){
+
+		this.isAlive = false;
+		this.isDead = true;
+		this.time = System.nanoTime();
+
+		for( Ghost gg : fantasmas ){
+			gg.stopTransition();
+			gg.setVisible(false);
+		}
+	}
+
+	/**
+	* @brief Fución que reinicia la escena agregando todas las comidas.
+	*/
 	public void restartScene(){
 		for(Vertex v : this.plano.getMap().values()){
 			Circle c = v.getCircle();
 			if( c.getRadius() > 0 ){
 				c.setVisible(true);
-				//this.root.getChildren().add( c );
 			}
 		}
 		this.comida = 244;
 	}
 
+	/**
+	* @brief Función que reinicia las vidas y el puntaje.
+	*/
 	public void restartLives(){
 		this.vidas = 3;
 
@@ -164,24 +244,9 @@ public class PacMan extends AnimationTimer{
 		this.score.setText("Score ");
 	}
 
-	public void setIsAlive(){
-		if( this.vidas >= 0 && !this.isDead && !this.isAlive ){
-			setMessage("Ready?", 75, Color.YELLOW , false );
-			this.isAlive = true;
-			this.isDead = false;
-			this.bandera = true;
-		}
-	}
-
-	public boolean isAlive(){
-		return this.vidas >= 0;
-	}
-
-	private void updateScore( int s ){
-		this.puntaje += s ;
-		this.score.setText("Score "+ this.puntaje);
-	}
-
+	/**
+	* @brief Función que reicicia al PacMan y a los fantasmas.
+	*/
 	public void restart(){
 		this.isDead = false;
 		this.initVertex = this.startVertex;
@@ -202,43 +267,9 @@ public class PacMan extends AnimationTimer{
 		setMessage("Ready?", 75, Color.YELLOW , true );
 	}
 
-	private void win(){
-
-		this.isAlive = false;
-
-		for( Ghost g : fantasmas ){
-			g.stopTransition();
-		}
-
-		++this.nivel;
-		setMessage("LEVEL "+this.nivel , 60, Color.YELLOW , true );
-
-		//this.restartScene();
-	}
-
-	private void die( long now ){
-
-		this.isAlive = false;
-		this.isDead = true;
-		this.time = System.nanoTime();
-		//this.imageV.toFront();
-
-		for( Ghost gg : fantasmas ){
-				gg.stopTransition();
-				gg.setVisible(false);
-		}
-		/*
-		if( --this.vidas >= 0 ){
-			this.lives.get( this.vidas ).setVisible(false);
-			this.restart();
-		}
-		else{
-			setMessage("GAME OVER", 55, Color.RED , true );
-		}
-		*/
-		
-	}
-
+	/**
+	* @brief Función que actualiza la posición del PacMan.
+	**/
 	private void moveTo(){
 
 		if( plano.existNextVertex(
@@ -255,8 +286,6 @@ public class PacMan extends AnimationTimer{
 		this.imageV.setLayoutY(
 			this.endVertex.getY() - 6 - this.imageV.getLayoutBounds().getMinY() );
 
-		//this.imageV.toFront();
-
 		this.tt.setByX( this.imageV.getLayoutX() );
 		this.tt.setByY( this.imageV.getLayoutY() );
 
@@ -269,27 +298,30 @@ public class PacMan extends AnimationTimer{
 
 		Circle eat = this.endVertex.getCircle();
 
-		//if( this.root.getChildren().contains( eat ) ){
 		if( eat.isVisible() ){
-			if( eat.getRadius() > 1 ){
-				for( Ghost g : fantasmas ){
-					if( !g.goingToHome() && !g.inHome() )
-						g.setState("FEAR");
-				}
-			}
-			else if( eat.getRadius() == 1){
-				this.updateScore( 10 );
-			}
-			//this.root.getChildren().remove( eat );
+			
 			eat.setVisible(false);
 			--this.comida;
+			
+			if( eat.getRadius() == 1){
+				this.updateScore( 10 );
+			}
+
+			else if( eat.getRadius() > 1 ){
+				for( Ghost g : fantasmas )
+					if( !g.goingToHome() && !g.inHome() )
+						g.setState("FEAR");
+				this.updateScore( 10 );
+			}
 		}
 		else if( this.comida == 0){
 			win();
 		}
 	}
 
-
+	/**
+	* @brief Función principal de ejecución.
+	*/
 	public void handle( long now ){
 
 		if( this.isAlive ){
@@ -310,8 +342,7 @@ public class PacMan extends AnimationTimer{
 						this.updateScore( 200 );
 					}
 					else if( !g.goingToHome() ){
-						die( now );
-						break;
+						die(); break;
 					}
 				}
 			}
@@ -347,9 +378,9 @@ public class PacMan extends AnimationTimer{
 			this.root.getManejadorEventos().setScoreScene();
 		}
 
-		//Ponemos la secuencia de explosión
+		//Secuencia de explosión
 		else if( this.isDead ){
-			int num = (int)( now -this.time)/ (1000000000/this.fps);
+			int num = (int)( now - this.time)/ (1000000000/this.fps);
 			
 			if( num < this.fps){
 				this.imageV.setImage(
